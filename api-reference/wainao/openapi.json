@@ -1,0 +1,725 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "WaiNao API",
+    "description": "外脑API是一个强大的AI服务接口系统，提供了全面的AI模型管理、对话处理、机器人控制和工具集成功能。支持WebSocket实时通信、向量数据库操作和硬件设备管理。",
+    "version": "3.0.0",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.wainao.ai/v3",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/user": {
+      "get": {
+        "tags": ["用户管理"],
+        "summary": "获取当前用户信息",
+        "responses": {
+          "200": {
+            "description": "成功获取用户信息",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["用户管理"],
+        "summary": "更新用户信息",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bot": {
+      "get": {
+        "tags": ["机器人管理"],
+        "summary": "获取机器人列表",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "每页数量",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取机器人列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/models": {
+      "get": {
+        "tags": ["AI模型管理"],
+        "summary": "获取AI模型列表",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "每页显示数量",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取AI模型列表成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["AI模型管理"],
+        "summary": "创建AI模型",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIModelCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "创建AI模型成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/models/{modelId}": {
+      "get": {
+        "tags": ["AI模型管理"],
+        "summary": "获取AI模型信息",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/modelId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取AI模型信息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["AI模型管理"],
+        "summary": "更新AI模型",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/modelId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIModelUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新AI模型成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["AI模型管理"],
+        "summary": "删除AI模型",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/modelId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除AI模型成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/tools": {
+      "get": {
+        "tags": ["AI工具管理"],
+        "summary": "获取AI工具列表",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "每页显示数量",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取AI工具列表成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["AI工具管理"],
+        "summary": "创建AI工具",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIToolCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "创建AI工具成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/tools/{toolId}": {
+      "get": {
+        "tags": ["AI工具管理"],
+        "summary": "获取AI工具信息",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/toolId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取AI工具信息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["AI工具管理"],
+        "summary": "更新AI工具",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/toolId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIToolUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新AI工具成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["AI工具管理"],
+        "summary": "删除AI工具",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/toolId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除AI工具成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/tools/{toolId}/run": {
+      "post": {
+        "tags": ["AI工具管理"],
+        "summary": "执行AI工具",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/toolId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIToolRunRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "执行AI工具成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversation": {
+      "get": {
+        "tags": ["对话管理"],
+        "summary": "获取对话列表",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "每页显示数量",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取对话列表成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tool/speech": {
+      "post": {
+        "tags": ["工具服务"],
+        "summary": "语音服务",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpeechRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "语音处理成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "TypeApiReturn": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码"
+          },
+          "data": {
+            "type": "object",
+            "description": "返回数据"
+          },
+          "message": {
+            "type": "string",
+            "description": "状态信息"
+          }
+        }
+      },
+      "UserUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "用户名称"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "头像URL"
+          }
+        }
+      },
+      "AIModelCreateRequest": {
+        "type": "object",
+        "required": ["name", "service"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "模型名称"
+          },
+          "desc": {
+            "type": "string",
+            "description": "模型描述"
+          },
+          "service": {
+            "type": "string",
+            "description": "服务类型"
+          },
+          "conf": {
+            "type": "object",
+            "description": "模型配置"
+          }
+        }
+      },
+      "AIModelUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "模型名称"
+          },
+          "desc": {
+            "type": "string",
+            "description": "模型描述"
+          },
+          "service": {
+            "type": "string",
+            "description": "服务类型"
+          },
+          "conf": {
+            "type": "object",
+            "description": "模型配置"
+          }
+        }
+      },
+      "AIToolCreateRequest": {
+        "type": "object",
+        "required": ["name", "service"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "工具名称"
+          },
+          "desc": {
+            "type": "string",
+            "description": "工具描述"
+          },
+          "service": {
+            "type": "string",
+            "description": "服务类型"
+          },
+          "conf": {
+            "type": "object",
+            "description": "工具配置"
+          },
+          "actions": {
+            "type": "array",
+            "description": "工具动作列表",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "动作名称"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "动作类型",
+                  "enum": ["before", "on", "after"]
+                },
+                "conf": {
+                  "type": "object",
+                  "description": "动作配置"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AIToolUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "工具名称"
+          },
+          "desc": {
+            "type": "string",
+            "description": "工具描述"
+          },
+          "conf": {
+            "type": "object",
+            "description": "工具配置"
+          },
+          "actions": {
+            "type": "array",
+            "description": "工具动作列表",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "动作名称"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "动作类型",
+                  "enum": ["before", "on", "after"]
+                },
+                "conf": {
+                  "type": "object",
+                  "description": "动作配置"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AIToolRunRequest": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {
+          "convId": {
+            "type": "string",
+            "description": "对话ID"
+          },
+          "msgId": {
+            "type": "string",
+            "description": "消息ID"
+          },
+          "content": {
+            "type": "string",
+            "description": "执行内容"
+          },
+          "hook": {
+            "type": "string",
+            "description": "钩子类型",
+            "enum": ["start", "replace", "end"]
+          },
+          "data": {
+            "type": "object",
+            "description": "附加数据"
+          },
+          "send": {
+            "type": "boolean",
+            "description": "是否发送消息"
+          }
+        }
+      },
+      "SpeechRequest": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "待转换文本"
+          },
+          "voice": {
+            "type": "string",
+            "description": "语音类型"
+          }
+        },
+        "required": ["text"]
+      }
+    },
+    "parameters": {
+      "toolId": {
+        "name": "toolId",
+        "in": "path",
+        "required": true,
+        "description": "AI工具ID",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "modelId": {
+        "name": "modelId",
+        "in": "path",
+        "required": true,
+        "description": "AI模型ID",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "convId": {
+        "name": "convId",
+        "in": "path",
+        "required": true,
+        "description": "对话ID",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "botId": {
+        "name": "botId",
+        "in": "path",
+        "required": true,
+        "description": "机器人ID",
+        "schema": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

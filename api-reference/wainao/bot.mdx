@@ -1,0 +1,272 @@
+---
+title: '机器人管理'
+description: '机器人管理相关接口，包括创建、获取、更新和删除机器人'
+---
+
+# 机器人管理
+
+<Note>
+  所有机器人管理接口都需要有效的访问令牌。请确保在请求头中包含正确的Bearer令牌。
+</Note>
+
+<Card title="机器人功能概述" icon="robot">
+  机器人管理接口提供了创建、查询、更新和删除机器人的功能。每个机器人都可以配置特定的AI模型和行为参数。
+</Card>
+
+## 获取机器人列表
+
+<ParamField path="/bot" method="GET">
+获取当前用户的机器人列表，支持分页查询。
+
+<CodeGroup>
+  ```http 请求示例
+  GET /bot?page=1&limit=10
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "items": [
+        {
+          "id": "bot123",
+          "name": "客服助手",
+          "avatar": "https://example.com/avatar.jpg",
+          "desc": "智能客服机器人",
+          "modelId": "model123",
+          "createdAt": "2024-01-01T00:00:00Z"
+        }
+      ],
+      "total": 1
+    },
+    "message": "获取成功"
+  }
+  ```
+</CodeGroup>
+
+### 请求参数
+
+| 参数名 | 类型    | 必选 | 说明     |
+|--------|---------|------|----------|
+| page   | integer | 否   | 页码     |
+| limit  | integer | 否   | 每页数量 |
+
+</ParamField>
+
+## 创建机器人
+
+<ParamField path="/bot" method="POST">
+创建新的机器人。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "name": "客服助手",
+    "conf": {
+      "avatar": "https://example.com/avatar.jpg",
+      "desc": "智能客服机器人",
+      "modelId": "model123"
+    }
+  }
+  ```
+
+  ```http 请求示例
+  POST /bot
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "name": "客服助手",
+    "conf": {
+      "avatar": "https://example.com/avatar.jpg",
+      "desc": "智能客服机器人",
+      "modelId": "model123"
+    }
+  }
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "bot": {
+        "id": "bot123",
+        "name": "客服助手",
+        "conf": {
+          "avatar": "https://example.com/avatar.jpg",
+          "desc": "智能客服机器人",
+          "modelId": "model123"
+        },
+        "createdAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "message": "创建成功"
+  }
+  ```
+</CodeGroup>
+
+<Note>
+  创建机器人时，配置信息需要放在conf对象中，包括头像、描述和关联的AI模型ID。
+</Note>
+</ParamField>
+
+## 获取机器人详情
+
+<ParamField path="/bot/{botId}" method="GET">
+获取指定机器人的详细信息。
+
+<CodeGroup>
+  ```http 请求示例
+  GET /bot/bot123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "bot": {
+        "id": "bot123",
+        "name": "客服助手",
+        "conf": {
+          "avatar": "https://example.com/avatar.jpg",
+          "desc": "智能客服机器人",
+          "modelId": "model123"
+        },
+        "createdAt": "2024-01-01T00:00:00Z",
+        "updatedAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "message": "获取成功"
+  }
+  ```
+</CodeGroup>
+
+### 路径参数
+
+| 参数名 | 类型   | 必选 | 说明      |
+|--------|--------|------|-----------|
+| botId  | string | 是   | 机器人ID  |
+
+<Card title="错误码" icon="circle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 404    | 机器人不存在 |
+| 500    | 服务器错误 |
+</Card>
+
+</ParamField>
+
+## 更新机器人
+
+<ParamField path="/bot/{botId}" method="PATCH">
+更新指定机器人的信息。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "name": "更新后的名称",
+    "conf": {
+      "avatar": "https://example.com/new-avatar.jpg",
+      "desc": "更新后的描述",
+      "modelId": "new-model-id"
+    }
+  }
+  ```
+
+  ```http 请求示例
+  PATCH /bot/bot123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "name": "更新后的名称",
+    "conf": {
+      "avatar": "https://example.com/new-avatar.jpg",
+      "desc": "更新后的描述",
+      "modelId": "new-model-id"
+    }
+  }
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "bot": {
+        "id": "bot123",
+        "name": "更新后的名称",
+        "conf": {
+          "avatar": "https://example.com/new-avatar.jpg",
+          "desc": "更新后的描述",
+          "modelId": "new-model-id"
+        },
+        "updatedAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "message": "更新成功"
+  }
+  ```
+</CodeGroup>
+
+### 路径参数
+
+| 参数名 | 类型   | 必选 | 说明      |
+|--------|--------|------|-----------|
+| botId  | string | 是   | 机器人ID  |
+
+<Note type="warning">
+  更新操作会覆盖现有的配置信息，请确保提供完整的配置对象。
+</Note>
+
+<Card title="错误码" icon="circle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 404    | 机器人不存在 |
+| 500    | 服务器错误 |
+</Card>
+
+</ParamField>
+
+## 删除机器人
+
+<ParamField path="/bot/{botId}" method="DELETE">
+删除指定的机器人。
+
+<CodeGroup>
+  ```http 请求示例
+  DELETE /bot/bot123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "result": true
+    },
+    "message": "删除成功"
+  }
+  ```
+</CodeGroup>
+
+### 路径参数
+
+| 参数名 | 类型   | 必选 | 说明      |
+|--------|--------|------|-----------|
+| botId  | string | 是   | 机器人ID  |
+
+<Note type="warning">
+  删除操作不可恢复，请谨慎操作。删除机器人会同时删除与该机器人相关的所有对话记录。
+</Note>
+
+<Card title="错误码" icon="circle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 404    | 机器人不存在 |
+| 500    | 服务器错误 |
+</Card>
+
+</ParamField>

@@ -1,0 +1,288 @@
+---
+title: '向量数据库工具'
+description: '向量数据库操作接口，支持数据的增删改查和向量搜索'
+---
+
+# 向量数据库工具
+
+<Card title="向量数据库功能" icon="database">
+  提供完整的向量数据库操作接口，支持：
+  - 数据检索和向量搜索
+  - 数据的增删改查
+  - 批量操作
+  - 条件过滤
+</Card>
+
+## 获取数据列表
+
+<ParamField path="/tool/vdb/{className}" method="GET">
+获取指定数据库的数据列表。
+
+### 路径参数
+
+| 参数名    | 类型   | 必选 | 说明      |
+|-----------|--------|------|-----------|
+| className | string | 是   | 数据库名称 |
+
+### 查询参数
+
+| 参数名 | 类型   | 必选 | 说明      |
+|--------|--------|------|-----------|
+| limit  | number | 否   | 返回数量  |
+| skip   | number | 否   | 跳过数量  |
+| where  | object | 否   | 查询条件  |
+
+<CodeGroup>
+```http 请求示例
+GET /tool/vdb/wainao_chat?limit=10&skip=0
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "list": [
+      {
+        "id": "doc123",
+        "content": "文档内容",
+        "tags": ["AI", "文档"]
+      }
+    ]
+  },
+  "message": "获取数据列表成功"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取单条数据
+
+<ParamField path="/tool/vdb/{className}/{id}" method="GET">
+获取指定ID的数据详情。
+
+### 路径参数
+
+| 参数名    | 类型   | 必选 | 说明      |
+|-----------|--------|------|-----------|
+| className | string | 是   | 数据库名称 |
+| id        | string | 是   | 数据ID    |
+
+<CodeGroup>
+```http 请求示例
+GET /tool/vdb/wainao_chat/doc123
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "result": {
+      "id": "doc123",
+      "content": "文档内容",
+      "tags": ["AI", "文档"]
+    }
+  },
+  "message": "获取数据成功"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 创建数据
+
+<ParamField path="/tool/vdb/{className}" method="POST">
+创建新的向量数据。
+
+
+### 请求参数
+
+| 参数名    | 类型   | 必选 | 说明      |
+|-----------|--------|------|-----------|
+| content   | string | 是   | 内容文本  |
+| tags      | array  | 否   | 标签列表  |
+| metadata  | object | 否   | 元数据    |
+
+<CodeGroup>
+```http 请求示例
+POST /tool/vdb/wainao_chat
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "content": "新的文档内容",
+  "tags": ["AI", "新文档"],
+  "metadata": {
+    "author": "用户名",
+    "createTime": "2024-01-10"
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "result": {
+      "id": "doc789",
+      "content": "新的文档内容",
+      "tags": ["AI", "新文档"],
+      "metadata": {
+        "author": "用户名",
+        "createTime": "2024-01-10"
+      }
+    }
+  },
+  "message": "创建数据成功"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新数据
+
+<ParamField path="/tool/vdb/{className}/{id}" method="PATCH">
+更新指定ID的数据。
+
+### 路径参数
+
+| 参数名    | 类型   | 必选 | 说明      |
+|-----------|--------|------|-----------|
+| className | string | 是   | 数据库名称 |
+| id        | string | 是   | 数据ID    |
+
+<CodeGroup>
+```http 请求示例
+PATCH /tool/vdb/wainao_chat/doc789
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "content": "更新后的文档内容",
+  "tags": ["AI", "更新文档"]
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "result": {
+      "id": "doc789",
+      "content": "更新后的文档内容",
+      "tags": ["AI", "更新文档"]
+    }
+  },
+  "message": "更新数据成功"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 删除数据
+
+<ParamField path="/tool/vdb/{className}/{id}" method="DELETE">
+删除指定ID的数据。
+
+### 路径参数
+
+| 参数名    | 类型   | 必选 | 说明      |
+|-----------|--------|------|-----------|
+| className | string | 是   | 数据库名称 |
+| id        | string | 是   | 数据ID    |
+
+<CodeGroup>
+```http 请求示例
+DELETE /tool/vdb/wainao_chat/doc789
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "result": true
+  },
+  "message": "删除数据成功"
+}
+```
+</CodeGroup>
+
+<Note type="warning">
+  删除操作不可恢复，请谨慎操作。
+</Note>
+</ParamField>
+
+## 向量搜索
+
+<ParamField path="/tool/vdb/{className}/vector" method="POST">
+基于内容进行向量相似度搜索。
+
+### 路径参数
+
+| 参数名    | 类型   | 必选 | 说明      |
+|-----------|--------|------|-----------|
+| className | string | 是   | 数据库名称 |
+
+### 请求参数
+
+| 参数名  | 类型   | 必选 | 说明      |
+|---------|--------|------|-----------|
+| content | string | 是   | 搜索内容  |
+| query   | object | 否   | 查询条件  |
+
+<CodeGroup>
+```http 请求示例
+POST /tool/vdb/wainao_chat/vector
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "content": "查找相似的AI文档",
+  "query": {
+    "filter": {
+      "tags": ["AI"]
+    },
+    "limit": 10
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "content": "查找相似的AI文档",
+    "query": {
+      "filter": {
+        "tags": ["AI"]
+      },
+      "limit": 10
+    },
+    "result": [
+      {
+        "id": "doc123",
+        "content": "AI相关文档",
+        "score": 0.95
+      }
+    ]
+  },
+  "message": "搜索数据成功"
+}
+```
+</CodeGroup>
+
+<Note>
+  向量搜索支持基于内容的相似度匹配，可以通过query参数进行精确过滤。
+</Note>
+</ParamField>
+
+<Card title="错误码说明" icon="circle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 404    | 数据不存在 |
+| 422    | 数据处理错误 |
+| 500    | 服务器错误 |
+</Card>

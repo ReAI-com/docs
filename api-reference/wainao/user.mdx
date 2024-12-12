@@ -1,0 +1,117 @@
+---
+title: '用户管理'
+description: '用户管理相关接口，包括获取和更新用户信息'
+---
+
+# 用户管理
+
+<Note>
+  用户管理接口需要有效的访问令牌。请确保在请求头中包含正确的Bearer令牌。
+</Note>
+
+## 获取用户信息
+
+<Card title="获取用户信息" icon="user">
+获取当前登录用户的详细信息。此接口返回用户的基本资料，包括ID、名称、头像等信息。
+</Card>
+
+<ParamField path="/user" method="GET">
+
+<CodeGroup>
+  ```http 请求示例
+  GET /user
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "id": "u123456",
+      "name": "张三",
+      "avatar": "https://example.com/avatar.jpg",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    },
+    "message": "获取成功"
+  }
+  ```
+
+  ```json 错误响应
+  {
+    "code": 401,
+    "data": null,
+    "message": "未授权访问"
+  }
+  ```
+</CodeGroup>
+
+### 错误码说明
+
+<Card title="错误码" icon="circle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 401    | 未授权 |
+| 500    | 服务器错误 |
+</Card>
+
+</ParamField>
+
+## 更新用户信息
+
+<Card title="更新用户信息" icon="pen-to-square">
+更新当前登录用户的基本信息。支持修改用户名称和头像。
+</Card>
+
+<ParamField path="/user" method="PUT">
+
+### 请求参数
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "name": "张三",           // 用户名称
+    "avatar": "https://example.com/avatar.jpg"  // 头像URL
+  }
+  ```
+
+  ```http 请求示例
+  PUT /user
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "name": "张三",
+    "avatar": "https://example.com/avatar.jpg"
+  }
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "id": "u123456",
+      "name": "张三",
+      "avatar": "https://example.com/avatar.jpg",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    },
+    "message": "更新成功"
+  }
+  ```
+</CodeGroup>
+
+<Note type="warning">
+  头像URL必须是可公开访问的有效图片地址。建议使用HTTPS链接以确保安全性。
+</Note>
+
+### 错误码说明
+
+<Card title="错误码" icon="circle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 401    | 未授权 |
+| 500    | 服务器错误 |
+</Card>
+
+</ParamField>

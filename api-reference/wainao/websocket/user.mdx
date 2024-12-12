@@ -1,0 +1,173 @@
+---
+title: '用户WebSocket'
+description: '用户WebSocket服务接口，用于实时消息通信'
+---
+
+# 用户WebSocket
+
+## 连接建立
+
+<ParamField path="/v3/wss" method="WebSocket">
+用户WebSocket连接端点。
+
+### 查询参数
+
+| 参数名 | 类型   | 必选 | 说明        |
+|--------|--------|------|-------------|
+| token  | string | 是   | 访问令牌    |
+
+```http 连接示例
+GET /v3/wss?token=YOUR_ACCESS_TOKEN
+```
+
+<Note>
+  连接成功后需要立即发送身份验证消息。
+</Note>
+</ParamField>
+
+## 身份验证
+
+连接建立后，客户端需要发送身份验证消息：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "auth",
+  "params": {
+    "token": "YOUR_ACCESS_TOKEN"
+  },
+  "id": "auth_1"
+}
+```
+
+服务器将响应验证结果：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "userId": "user123",
+    "status": "authenticated"
+  },
+  "id": "auth_1"
+}
+```
+
+## 消息类型
+
+### 系统消息
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "system",
+  "params": {
+    "type": "notification",
+    "content": "系统通知内容"
+  }
+}
+```
+
+### 对话消息
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "conversation",
+  "params": {
+    "convId": "conv123",
+    "type": "text",
+    "content": "消息内容"
+  }
+}
+```
+
+### 状态更新
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "status",
+  "params": {
+    "type": "online",
+    "timestamp": 1641234567890
+  }
+}
+```
+
+## 心跳机制
+
+客户端需要定期发送心跳包：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "ping",
+  "id": "ping_1"
+}
+```
+
+服务器将响应：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": "pong",
+  "id": "ping_1"
+}
+```
+
+<Note>
+  建议每30秒发送一次心跳包，超过90秒未收到心跳响应则重新连接。
+</Note>
+
+## 错误处理
+
+### 常见错误
+
+1. 认证失败
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32001,
+    "message": "Authentication failed",
+    "data": {
+      "reason": "Invalid token"
+    }
+  },
+  "id": "auth_1"
+}
+```
+
+2. 消息发送失败
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32602,
+    "message": "Invalid params",
+    "data": {
+      "field": "content",
+      "reason": "Content too long"
+    }
+  },
+  "id": "msg_1"
+}
+```
+
+### 重连策略
+
+1. 网络断开时立即尝试重连
+2. 失败后采用指数退避策略
+3. 最大重试间隔为5分钟
+4. 重连成功后重新进行身份验证
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| -32001 | 认证失败 |
+| -32002 | 权限不足 |
+| -32602 | 无效参数 |
+| -32603 | 内部错误 |
+</Card>

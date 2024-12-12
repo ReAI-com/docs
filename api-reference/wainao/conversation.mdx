@@ -1,0 +1,487 @@
+---
+title: '对话管理'
+description: '对话管理相关接口，包括创建对话、发送消息、获取历史记录等'
+---
+
+# 对话管理
+
+<Note>
+  所有对话管理接口都需要有效的访问令牌。请确保在请求头中包含正确的Bearer令牌。
+</Note>
+
+<Card title="对话功能概述" icon="comments">
+  对话管理接口提供了创建、查询、更新和删除对话的功能，以及消息的发送和管理功能。支持流式响应和工具调用。
+</Card>
+
+## 对话管理
+
+### 创建对话
+
+<ParamField path="/conversation" method="POST">
+创建新的对话。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "name": "技术咨询",
+    "botId": "bot123",
+    "conf": {
+      "title": "关于AI开发的咨询",
+      "description": "技术架构讨论"
+    },
+    "members": ["user123"]
+  }
+  ```
+
+  ```http 请求示例
+  POST /conversation
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "name": "技术咨询",
+    "botId": "bot123",
+    "conf": {
+      "title": "关于AI开发的咨询",
+      "description": "技术架构讨论"
+    },
+    "members": ["user123"]
+  }
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "conversation": {
+        "id": "conv123",
+        "name": "技术咨询",
+        "botId": "bot123",
+        "conf": {
+          "title": "关于AI开发的咨询",
+          "description": "技术架构讨论"
+        },
+        "members": ["user123"],
+        "createdAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "message": "创建成功"
+  }
+  ```
+</CodeGroup>
+
+<Note>
+  创建对话时可以指定参与者列表，如果不指定则默认只包含创建者。
+</Note>
+</ParamField>
+
+### 获取对话列表
+
+<ParamField path="/conversation" method="GET">
+获取对话列表，支持分页查询。
+
+<CodeGroup>
+  ```http 请求示例
+  GET /conversation?page=1&limit=10&hdId=device123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "list": [
+        {
+          "id": "conv123",
+          "name": "技术咨询",
+          "botId": "bot123",
+          "conf": {
+            "title": "关于AI开发的咨询"
+          },
+          "createdAt": "2024-01-01T00:00:00Z",
+          "updatedAt": "2024-01-01T00:00:00Z"
+        }
+      ],
+      "total": 1
+    },
+    "message": "获取成功"
+  }
+  ```
+</CodeGroup>
+
+### 请求参数
+
+| 参数名 | 类型    | 必选 | 说明         |
+|--------|---------|------|--------------|
+| page   | integer | 否   | 页码         |
+| limit  | integer | 否   | 每页数量     |
+| hdId   | string  | 否   | 硬件设备ID   |
+
+</ParamField>
+
+### 获取对话详情
+
+<ParamField path="/conversation/{convId}" method="GET">
+获取指定对话的详细信息。
+
+<CodeGroup>
+  ```http 请求示例
+  GET /conversation/conv123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "conversation": {
+        "id": "conv123",
+        "name": "技术咨询",
+        "botId": "bot123",
+        "conf": {
+          "title": "关于AI开发的咨询"
+        },
+        "members": ["user123"],
+        "createdAt": "2024-01-01T00:00:00Z",
+        "updatedAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "message": "获取成功"
+  }
+  ```
+</CodeGroup>
+
+### 路径参数
+
+| 参数名 | 类型   | 必选 | 说明    |
+|--------|--------|------|---------|
+| convId | string | 是   | 对话ID  |
+
+</ParamField>
+
+### 更新对话
+
+<ParamField path="/conversation/{convId}" method="PATCH">
+更新指定对话的信息。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "name": "更新后的名称",
+    "conf": {
+      "title": "更新后的标题",
+      "description": "更新后的描述"
+    }
+  }
+  ```
+
+  ```http 请求示例
+  PATCH /conversation/conv123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "name": "更新后的名称",
+    "conf": {
+      "title": "更新后的标题",
+      "description": "更新后的描述"
+    }
+  }
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "conversation": {
+        "id": "conv123",
+        "name": "更新后的名称",
+        "conf": {
+          "title": "更新后的标题",
+          "description": "更新后的描述"
+        },
+        "updatedAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "message": "更新成功"
+  }
+  ```
+</CodeGroup>
+
+<Note type="warning">
+  更新操作会覆盖现有的配置信息，请确保提供完整的配置对象。
+</Note>
+</ParamField>
+
+### 删除对话
+
+<ParamField path="/conversation/{convId}" method="DELETE">
+删除指定的对话。
+
+<CodeGroup>
+  ```http 请求示例
+  DELETE /conversation/conv123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "result": true
+    },
+    "message": "删除成功"
+  }
+  ```
+</CodeGroup>
+
+<Note type="warning">
+  删除操作不可恢复，会同时删除对话中的所有消息记录。
+</Note>
+</ParamField>
+
+## 消息管理
+
+<Card title="消息功能说明" icon="message">
+  消息管理接口提供了发送消息、获取消息历史、执行消息和工具调用等功能。支持流式响应和自动工具调用。
+</Card>
+
+### 获取消息列表
+
+<ParamField path="/conversation/{convId}/messages" method="GET">
+获取指定对话的消息历史记录。
+
+<CodeGroup>
+  ```http 请求示例
+  GET /conversation/conv123/messages?page=1&limit=20
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "list": [
+        {
+          "id": "msg123",
+          "convId": "conv123",
+          "content": "您好，请问有什么可以帮助您？",
+          "role": "assistant",
+          "createdAt": "2024-01-01T00:00:00Z"
+        }
+      ],
+      "conversation": {
+        "id": "conv123",
+        "name": "技术咨询"
+      }
+    },
+    "message": "获取成功"
+  }
+  ```
+</CodeGroup>
+
+### 请求参数
+
+| 参数名 | 类型    | 必选 | 说明     |
+|--------|---------|------|----------|
+| page   | integer | 否   | 页码     |
+| limit  | integer | 否   | 每页数量 |
+
+</ParamField>
+
+### 发送消息
+
+<ParamField path="/conversation/{convId}/messages" method="POST">
+向指定对话发送新消息。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "content": "请帮我分析这段代码的性能问题",
+    "attrs": {
+      "stream": true,
+      "tool_auto": true,
+      "isDebug": false
+    }
+  }
+  ```
+
+  ```http 请求示例
+  POST /conversation/conv123/messages
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "content": "请帮我分析这段代码的性能问题",
+    "attrs": {
+      "stream": true,
+      "tool_auto": true,
+      "isDebug": false
+    }
+  }
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "message": {
+        "id": "msg123",
+        "convId": "conv123",
+        "content": "请帮我分析这段代码的性能问题",
+        "role": "user",
+        "createdAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "message": "发送成功"
+  }
+  ```
+</CodeGroup>
+
+<Note>
+  设置stream=true时将返回流式响应，tool_auto=true时将自动调用相关工具。
+</Note>
+</ParamField>
+
+### 执行消息
+
+<ParamField path="/conversation/{convId}/messages/run" method="POST">
+执行新的消息，支持流式响应和工具调用。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "content": "分析这段代码的复杂度",
+    "stream": true,
+    "tool_auto": true,
+    "isDebug": false
+  }
+  ```
+
+
+  ```http 请求示例
+  POST /conversation/conv123/messages/run
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "content": "分析这段代码的复杂度",
+    "stream": true,
+    "tool_auto": true,
+    "isDebug": false
+  }
+  ```
+</CodeGroup>
+
+### 请求参数
+
+| 参数名    | 类型    | 必选 | 说明             |
+|-----------|---------|------|------------------|
+| content   | string  | 是   | 消息内容         |
+| stream    | boolean | 否   | 是否使用流式响应 |
+| tool_auto | boolean | 否   | 是否自动调用工具 |
+| isDebug   | boolean | 否   | 是否开启调试模式 |
+
+<Note type="warning">
+  流式响应会通过WebSocket推送消息内容，请确保已建立WebSocket连接。
+</Note>
+</ParamField>
+
+### 重新执行消息
+
+<ParamField path="/conversation/{convId}/messages/{msgId}/run" method="POST">
+重新执行指定的消息。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "content": "使用新的参数重新分析",
+    "stream": true,
+    "tool_auto": true,
+    "isDebug": false
+  }
+  ```
+
+  ```http 请求示例
+  POST /conversation/conv123/messages/msg123/run
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "content": "使用新的参数重新分析",
+    "stream": true,
+    "tool_auto": true,
+    "isDebug": false
+  }
+  ```
+</CodeGroup>
+
+### 路径参数
+
+| 参数名 | 类型   | 必选 | 说明    |
+|--------|--------|------|---------|
+| convId | string | 是   | 对话ID  |
+| msgId  | string | 是   | 消息ID  |
+
+</ParamField>
+
+### 工具调用响应
+
+<ParamField path="/conversation/{convId}/messages/{msgId}/tool" method="POST">
+响应工具调用请求。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "tool_call_id": "call123",
+    "content": "工具执行结果"
+  }
+  ```
+
+  ```http 请求示例
+  POST /conversation/conv123/messages/msg123/tool
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "tool_call_id": "call123",
+    "content": "工具执行结果"
+  }
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "message": {
+        "id": "msg124",
+        "convId": "conv123",
+        "content": "工具执行结果",
+        "role": "tool",
+        "createdAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "message": "响应成功"
+  }
+  ```
+</CodeGroup>
+
+### 请求参数
+
+| 参数名       | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| tool_call_id| string | 是   | 工具调用ID   |
+| content     | string | 是   | 执行结果     |
+
+<Note>
+  工具调用响应会触发后续的消息处理流程，可能产生新的消息。
+</Note>
+</ParamField>
+
+<Card title="错误码说明" icon="circle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 404    | 对话或消息不存在 |
+| 500    | 服务器错误 |
+</Card>

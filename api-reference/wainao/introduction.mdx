@@ -1,0 +1,114 @@
+---
+title: '外脑API概述'
+description: '外脑API是一个强大的AI服务接口系统，提供全面的AI模型管理、对话处理和工具集成功能'
+---
+
+# 外脑API文档
+
+欢迎使用外脑API！本文档将帮助您了解和使用外脑API的各项功能。
+
+<Note>
+  在开始使用API之前，请确保您已经注册并获取了必要的访问凭证。如需帮助，请联系我们的技术支持团队。
+</Note>
+
+## 系统架构
+
+外脑API采用模块化的微服务架构，主要包含以下核心组件：
+
+<Card title="核心服务" icon="server">
+  - **用户管理** - 处理用户认证、授权和信息管理
+  - **机器人管理** - 提供机器人创建、配置和管理功能
+  - **AI模型管理** - 支持多种AI服务（OpenAI、Claude、Dify、百度）的模型管理
+  - **对话系统** - 实现智能对话和消息处理功能
+</Card>
+
+<Card title="实时通信" icon="bolt">
+  - **WebSocket服务** - 支持用户、应用和硬件设备的实时消息通信
+  - **消息队列** - 使用Redis实现可靠的消息广播和订阅
+</Card>
+
+<Card title="工具集成" icon="wrench">
+  - **语音服务** - 提供文本转语音功能
+  - **向量数据库** - 支持高效的向量检索和内容匹配
+  - **主页工具** - 提供内容推荐和展示功能
+  - **外脑工具** - 实现智能内容分析和处理
+</Card>
+
+## 快速开始
+
+<CodeGroup>
+  ```bash 获取访问令牌
+  curl -X POST https://api.wainao.ai/oauth/token \
+    -H "Content-Type: application/json" \
+    -d '{
+      "grant_type": "client_credentials",
+      "client_id": "YOUR_CLIENT_ID",
+      "client_secret": "YOUR_CLIENT_SECRET"
+    }'
+  ```
+
+  ```bash 使用访问令牌
+  curl https://api.wainao.ai/user \
+    -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+  ```
+</CodeGroup>
+
+## 认证方式
+
+外脑API支持多种认证方式：
+- OAuth 2.0授权码模式
+- 客户端凭证模式
+- 刷新令牌机制
+
+<Note type="warning">
+  请妥善保管您的访问凭证，不要在客户端代码中明文存储密钥信息。
+</Note>
+
+详细说明请参考[认证文档](/api-reference/wainao/authentication)。
+
+## 响应格式
+
+所有API响应都遵循统一的格式：
+
+<CodeGroup>
+  ```json 成功响应
+  {
+    "code": 200,      // 状态码
+    "data": {},       // 响应数据
+    "message": "操作成功"     // 状态信息
+  }
+  ```
+
+  ```json 错误响应
+  {
+    "code": 400,      // 错误码
+    "data": null,     // 空数据
+    "message": "请求参数错误"  // 错误信息
+  }
+  ```
+</CodeGroup>
+
+## 错误处理
+
+API使用标准HTTP状态码表示请求状态：
+
+<Card title="状态码说明" icon="circle-info">
+  - **2xx** - 请求成功
+  - **4xx** - 客户端错误
+  - **5xx** - 服务器错误
+</Card>
+
+<Note type="info">
+  详细错误码说明请参考各接口文档的错误处理部分。
+</Note>
+
+## 开发资源
+
+<Card title="API文档" icon="book">
+  - [用户管理](/api-reference/wainao/user)
+  - [机器人管理](/api-reference/wainao/bot)
+  - [AI模型与工具](/api-reference/wainao/ai)
+  - [对话管理](/api-reference/wainao/conversation)
+  - [WebSocket服务](/api-reference/wainao/websocket)
+  - [工具服务](/api-reference/wainao/tools)
+</Card>

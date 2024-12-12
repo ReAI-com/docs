@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "WaiNao API",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
@@ -17,75 +17,69 @@
   },
   "topbarLinks": [
     {
-      "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "name": "支持",
+      "url": "mailto:support@wainao.ai"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "控制台",
+    "url": "https://console.wainao.ai"
   },
   "tabs": [
     {
-      "name": "API Reference",
+      "name": "API文档",
       "url": "api-reference"
     }
   ],
   "anchors": [
     {
-      "name": "Documentation",
+      "name": "文档",
       "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "url": "https://docs.wainao.ai"
     },
     {
-      "name": "Community",
+      "name": "社区",
       "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "url": "https://community.wainao.ai"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "WaiNao API",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
+        "api-reference/wainao/introduction",
+        "api-reference/wainao/authentication"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "核心服务",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "api-reference/wainao/user",
+        "api-reference/wainao/ai",
+        "api-reference/wainao/bot",
+        "api-reference/wainao/conversation"
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "WebSocket服务",
       "pages": [
-        "api-reference/introduction"
+        "api-reference/wainao/websocket/introduction",
+        "api-reference/wainao/websocket/user",
+        "api-reference/wainao/websocket/app",
+        "api-reference/wainao/websocket/hardware"
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "工具服务",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/wainao/tools/speech",
+        "api-reference/wainao/tools/vdb",
+        "api-reference/wainao/tools/home",
+        "api-reference/wainao/tools/wainao"
       ]
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "github": "https://github.com/ReAI-com"
   }
 }
