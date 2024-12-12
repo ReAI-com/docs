@@ -1,0 +1,205 @@
+---
+title: "条件判断 Block"
+description: "条件判断 block 用于根据条件执行不同的分支，支持复杂的嵌套逻辑和多条件判断。"
+---
+
+# 条件判断 Block
+
+条件判断 block 用于在工作流中实现条件分支逻辑。它可以根据条件的真假选择不同的执行路径，支持复杂的嵌套结构和多条件判断。
+
+## 配置选项
+
+```typescript
+{
+  // 条件表达式
+  condition: "",
+
+  // 条件类型：expression（表达式）、comparison（比较）
+  type: "expression",
+
+  // 比较配置（type 为 comparison 时使用）
+  comparison: {
+    // 左值
+    left: "",
+    // 操作符
+    operator: "==",
+    // 右值
+    right: ""
+  },
+
+  // 是否在条件计算出错时继续执行
+  continueOnError: false
+}
+```
+
+### 参数说明
+
+1. **condition**
+   - 类型：string
+   - 默认值：空字符串
+   - 作用：设置条件表达式
+   - 说明：支持 JavaScript 表达式
+
+2. **type**
+   - 类型：string
+   - 可选值：expression、comparison
+   - 默认值：expression
+   - 作用：决定条件判断的方式
+
+3. **comparison**
+   - 类型：object
+   - 作用：配置比较操作
+   - 属性：
+     - left：左值
+     - operator：操作符（==, !=, >, <, >=, <=）
+     - right：右值
+
+4. **continueOnError**
+   - 类型：boolean
+   - 默认值：false
+   - 作用：控制条件计算错误时的行为
+   - 说明：true 时使用默认值 false 继续执行
+
+## 嵌套使用说明
+
+条件判断 block 支持多层嵌套，可以实现复杂的条件逻辑：
+
+1. **基本嵌套结构**
+```json
+{
+  "type": "ifElse",
+  "options": {
+    "condition": "value > 10"
+  },
+  "children": {
+    "if": [
+      {
+        "type": "ifElse",
+        "options": {
+          "condition": "value < 20"
+        }
+      }
+    ],
+    "else": [
+      {
+        "type": "ifElse",
+        "options": {
+          "condition": "value > 30"
+        }
+      }
+    ]
+  }
+}
+```
+
+2. **嵌套层级控制**
+- 建议不超过 3 层嵌套
+- 使用清晰的条件表达式
+- 注意条件的优先级
+
+3. **分支处理**
+- if 分支：条件为真时执行
+- else 分支：条件为假时执行
+- 可以在任意分支中继续嵌套
+
+## 使用示例
+
+1. **基础条件判断**
+```json
+{
+  "type": "ifElse",
+  "options": {
+    "type": "expression",
+    "condition": "score >= 60"
+  }
+}
+```
+
+2. **比较操作**
+```json
+{
+  "type": "ifElse",
+  "options": {
+    "type": "comparison",
+    "comparison": {
+      "left": "status",
+      "operator": "==",
+      "right": "success"
+    }
+  }
+}
+```
+
+3. **复杂嵌套条件**
+```json
+{
+  "type": "ifElse",
+  "options": {
+    "condition": "age >= 18"
+  },
+  "children": {
+    "if": [
+      {
+        "type": "ifElse",
+        "options": {
+          "condition": "score >= 90"
+        },
+        "children": {
+          "if": [
+            {
+              "type": "text",
+              "options": {
+                "content": "优秀"
+              }
+            }
+          ],
+          "else": [
+            {
+              "type": "text",
+              "options": {
+                "content": "良好"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "else": [
+      {
+        "type": "text",
+        "options": {
+          "content": "未成年"
+        }
+      }
+    ]
+  }
+}
+```
+
+## 注意事项
+
+1. **条件设计**
+   - 使用清晰的条件表达式
+   - 避免复杂的计算
+   - 处理边界情况
+
+2. **嵌套使用**
+   - 控制嵌套层级
+   - 使用有意义的条件名称
+   - 注意条件的组合关系
+
+3. **错误处理**
+   - 处理条件计算错误
+   - 设置合理的默认行为
+   - 考虑异常情况
+
+4. **与其他 Block 配合**
+   - 可以在条件分支中使用任何类型的 block
+   - 可以与 loop block 组合使用
+   - 可以根据用户输入进行判断
+   - 可以处理 AI 生成的结果
+
+5. **性能优化**
+   - 优化条件表达式
+   - 避免不必要的嵌套
+   - 合理使用比较操作
