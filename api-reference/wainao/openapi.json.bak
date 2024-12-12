@@ -1,0 +1,576 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "WaiNao API",
+    "description": "外脑API是一个强大的AI服务接口系统，提供了全面的AI模型管理、对话处理、机器人控制和工具集成功能。",
+    "version": "3.0.0",
+    "license": {
+      "name": "Private"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.wainao.ai/v3",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/user": {
+      "get": {
+        "tags": ["用户管理"],
+        "summary": "获取当前用户信息",
+        "parameters": [
+          {
+            "name": "force",
+            "in": "query",
+            "description": "强制刷新用户信息",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取用户信息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["用户管理"],
+        "summary": "更新当前用户信息",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新用户信息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/logout": {
+      "post": {
+        "tags": ["用户管理"],
+        "summary": "用户注销",
+        "responses": {
+          "200": {
+            "description": "注销成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userId}": {
+      "get": {
+        "tags": ["用户管理"],
+        "summary": "根据ID获取用户信息",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取用户信息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["用户管理"],
+        "summary": "根据ID更新用户信息",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新用户信息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bot": {
+      "get": {
+        "tags": ["机器人管理"],
+        "summary": "获取机器人列表",
+        "responses": {
+          "200": {
+            "description": "获取列表成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["机器人管理"],
+        "summary": "创建机器人",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BotCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "创建机器人成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bot/{botId}": {
+      "get": {
+        "tags": ["机器人管理"],
+        "summary": "根据ID获取机器人信息",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BotIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取机器人信息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["机器人管理"],
+        "summary": "根据ID更新机器人信息",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BotIdParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BotUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新机器人信息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["机器人管理"],
+        "summary": "根据ID删除机器人",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BotIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除机器人成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversation": {
+      "get": {
+        "tags": ["对话管理"],
+        "summary": "获取对话列表",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "每页显示数量",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取对话列表成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["对话管理"],
+        "summary": "创建对话",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConversationCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "创建对话成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeApiReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversation/{convId}/messages": {
+      "get": {
+        "tags": ["消息管理"],
+        "summary": "获取消息列表",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/convId"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "每页显示数量",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取消息列表成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["消息管理"],
+        "summary": "创建消息",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/convId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "创建消息成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+    "schemas": {
+      "TypeApiReturn": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "响应状态码"
+          },
+          "data": {
+            "type": "object",
+            "description": "响应数据"
+          },
+          "message": {
+            "type": "string",
+            "description": "响应消息"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "错误码"
+          },
+          "message": {
+            "type": "string",
+            "description": "错误信息"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "UserUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "用户名称"
+          }
+        }
+      },
+      "BotCreateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "机器人名称"
+          },
+          "conf": {
+            "type": "object",
+            "description": "机器人配置"
+          }
+        },
+        "required": ["name"]
+      },
+      "BotUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "机器人名称"
+          },
+          "conf": {
+            "type": "object",
+            "description": "机器人配置"
+          }
+        }
+      },
+      "ConversationCreateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "对话名称"
+          },
+          "botId": {
+            "type": "string",
+            "description": "机器人ID"
+          },
+          "conf": {
+            "type": "object",
+            "description": "对话配置"
+          }
+        },
+        "required": ["name", "botId"]
+      },
+      "MessageCreateRequest": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "消息内容"
+          },
+          "attrs": {
+            "type": "object",
+            "properties": {
+              "stream": {
+                "type": "boolean",
+                "description": "是否流式响应"
+              },
+              "tool_auto": {
+                "type": "boolean",
+                "description": "是否自动使用工具"
+              },
+              "isDebug": {
+                "type": "boolean",
+                "description": "是否调试模式"
+              }
+            }
+          }
+        },
+        "required": ["content"]
+      }
+    },
+    "parameters": {
+      "convId": {
+        "name": "convId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "对话ID"
+      },
+      "botId": {
+        "name": "botId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "机器人ID"
+      },
+      "UserIdParam": {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "用户ID"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "未授权访问",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "code": 401,
+              "message": "未授权访问"
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "资源未找到",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "code": 404,
+              "message": "请求的资源不存在"
+            }
+          }
+        }
+      }
+    }
+  }
+}
