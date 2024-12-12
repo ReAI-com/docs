@@ -7,76 +7,133 @@ description: '外脑API的认证与授权机制说明'
 
 外脑API使用OAuth 2.0协议进行认证和授权。支持以下授权方式：
 
+<Note type="warning">
+  请确保在安全的环境中处理认证信息，切勿在客户端代码中存储密钥。所有的认证请求都应该通过HTTPS进行。
+</Note>
+
 ## 授权码模式
 
-适用于有用户交互的应用场景。
+<Card title="适用场景" icon="user">
+  适用于有用户交互的应用场景，如Web应用、移动应用等。用户通过浏览器完成授权。
+</Card>
 
 ### 流程说明
 
-1. 获取授权码
-```http
-GET /oauth/authorize
-```
+<CodeGroup>
+  ```http 1. 获取授权码
+  GET /oauth/authorize
 
-参数：
-- `client_id`: 应用ID
-- `redirect_uri`: 回调地址
-- `response_type`: 固定为"code"
-- `scope`: 权限范围
+  # 请求参数
+  client_id=YOUR_CLIENT_ID
+  redirect_uri=YOUR_REDIRECT_URI
+  response_type=code
+  scope=YOUR_SCOPE
+  ```
 
-2. 使用授权码获取访问令牌
-```http
-POST /oauth/token
-```
+  ```http 2. 获取访问令牌
+  POST /oauth/token
+  Content-Type: application/json
 
-参数：
-- `grant_type`: 固定为"authorization_code"
-- `code`: 授权码
-- `client_id`: 应用ID
-- `client_secret`: 应用密钥
-- `redirect_uri`: 回调地址
+  {
+    "grant_type": "authorization_code",
+    "code": "AUTHORIZATION_CODE",
+    "client_id": "YOUR_CLIENT_ID",
+    "client_secret": "YOUR_CLIENT_SECRET",
+    "redirect_uri": "YOUR_REDIRECT_URI"
+  }
+  ```
+</CodeGroup>
+
+<Note>
+  授权码的有效期为10分钟，请确保在有效期内完成令牌交换。
+</Note>
 
 ## 客户端凭证模式
 
-适用于服务器间通信场景。
+<Card title="适用场景" icon="server">
+  适用于服务器间通信场景，无需用户交互。直接使用客户端凭证获取访问令牌。
+</Card>
 
-```http
-POST /oauth/token
-```
+<CodeGroup>
+  ```http 获取访问令牌
+  POST /oauth/token
+  Content-Type: application/json
 
-参数：
-- `grant_type`: 固定为"client_credentials"
-- `client_id`: 应用ID
-- `client_secret`: 应用密钥
-- `scope`: 权限范围
+  {
+    "grant_type": "client_credentials",
+    "client_id": "YOUR_CLIENT_ID",
+    "client_secret": "YOUR_CLIENT_SECRET",
+    "scope": "YOUR_SCOPE"
+  }
+  ```
+
+  ```json 响应示例
+  {
+    "access_token": "ACCESS_TOKEN",
+    "token_type": "Bearer",
+    "expires_in": 3600,
+    "scope": "YOUR_SCOPE"
+  }
+  ```
+</CodeGroup>
 
 ## 刷新令牌
 
-当访问令牌过期时，使用刷新令牌获取新的访问令牌。
+<Card title="令牌刷新" icon="arrows-rotate">
+  当访问令牌过期时，使用刷新令牌获取新的访问令牌，避免重新走授权流程。
+</Card>
 
-```http
-POST /oauth/token
-```
+<CodeGroup>
+  ```http 刷新访问令牌
+  POST /oauth/token
+  Content-Type: application/json
 
-参数：
-- `grant_type`: 固定为"refresh_token"
-- `refresh_token`: 刷新令牌
-- `client_id`: 应用ID
-- `client_secret`: 应用密钥
+  {
+    "grant_type": "refresh_token",
+    "refresh_token": "REFRESH_TOKEN",
+    "client_id": "YOUR_CLIENT_ID",
+    "client_secret": "YOUR_CLIENT_SECRET"
+  }
+  ```
+
+  ```json 响应示例
+  {
+    "access_token": "NEW_ACCESS_TOKEN",
+    "token_type": "Bearer",
+    "expires_in": 3600,
+    "refresh_token": "NEW_REFRESH_TOKEN"
+  }
+  ```
+</CodeGroup>
 
 ## 使用访问令牌
 
-所有API请求都需要在HTTP头部包含Bearer令牌：
+<Note type="info">
+  所有API请求都需要在HTTP头部包含Bearer令牌进行身份验证。
+</Note>
 
-```http
-Authorization: Bearer <access_token>
-```
+<CodeGroup>
+  ```http 请求示例
+  GET /api/resource
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 未授权响应
+  {
+    "code": 401,
+    "message": "未授权访问",
+    "data": null
+  }
+  ```
+</CodeGroup>
 
 ## 错误码说明
 
+<Card title="认证错误码" icon="circle-exclamation">
 | 错误码 | 说明 |
 |--------|------|
 | 400    | 请求参数错误 |
 | 401    | 未授权或令牌无效 |
 | 403    | 权限不足 |
 | 500    | 服务器错误 |
+</Card>
