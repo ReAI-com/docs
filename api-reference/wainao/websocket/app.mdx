@@ -1,0 +1,187 @@
+---
+title: '应用WebSocket'
+description: '应用WebSocket服务接口，用于应用级实时通信'
+---
+
+# 应用WebSocket
+
+## 连接建立
+
+<ParamField path="/v3/wss/:appId" method="WebSocket">
+应用WebSocket连接端点。
+
+### 路径参数
+
+| 参数名 | 类型   | 必选 | 说明      |
+|--------|--------|------|-----------|
+| appId  | string | 是   | 应用ID    |
+
+### 查询参数
+
+| 参数名 | 类型   | 必选 | 说明        |
+|--------|--------|------|-------------|
+| token  | string | 是   | 访问令牌    |
+
+```http 连接示例
+GET /v3/wss/app123?token=YOUR_ACCESS_TOKEN
+```
+
+<Note>
+  连接成功后需要立即发送应用身份验证消息。
+</Note>
+</ParamField>
+
+## 身份验证
+
+连接建立后，应用需要发送身份验证消息：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "auth",
+  "params": {
+    "appId": "app123",
+    "token": "YOUR_ACCESS_TOKEN"
+  },
+  "id": "auth_1"
+}
+```
+
+服务器将响应验证结果：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "appId": "app123",
+    "status": "authenticated"
+  },
+  "id": "auth_1"
+}
+```
+
+## 消息类型
+
+### 应用事件
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "event",
+  "params": {
+    "type": "status_change",
+    "data": {
+      "status": "running",
+      "timestamp": 1641234567890
+    }
+  }
+}
+```
+
+### 任务通知
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "task",
+  "params": {
+    "taskId": "task123",
+    "status": "completed",
+    "result": {
+      "success": true,
+      "data": {}
+    }
+  }
+}
+```
+
+### 资源更新
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "resource",
+  "params": {
+    "type": "update",
+    "resource": "database",
+    "action": "backup_completed"
+  }
+}
+```
+
+## 心跳机制
+
+应用需要定期发送心跳包：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "ping",
+  "id": "ping_1"
+}
+```
+
+服务器将响应：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": "pong",
+  "id": "ping_1"
+}
+```
+
+<Note>
+  建议每30秒发送一次心跳包，超过90秒未收到心跳响应则重新连接。
+</Note>
+
+## 错误处理
+
+### 常见错误
+
+1. 应用认证失败
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32001,
+    "message": "Application authentication failed",
+    "data": {
+      "reason": "Invalid application ID"
+    }
+  },
+  "id": "auth_1"
+}
+```
+
+2. 资源访问失败
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32002,
+    "message": "Access denied",
+    "data": {
+      "resource": "database",
+      "reason": "Insufficient permissions"
+    }
+  },
+  "id": "resource_1"
+}
+```
+
+### 重连策略
+
+1. 网络断开时立即尝试重连
+2. 失败后采用指数退避策略
+3. 最大重试间隔为5分钟
+4. 重连成功后重新进行应用身份验证
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| -32001 | 应用认证失败 |
+| -32002 | 权限不足 |
+| -32602 | 无效参数 |
+| -32603 | 内部错误 |
+</Card>

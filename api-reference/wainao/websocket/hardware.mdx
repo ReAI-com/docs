@@ -1,0 +1,186 @@
+---
+title: '硬件WebSocket'
+description: '硬件WebSocket服务接口，用于硬件设备实时通信'
+---
+
+# 硬件WebSocket
+
+## 连接建立
+
+<ParamField path="/v3/wss/:hdId" method="WebSocket">
+硬件WebSocket连接端点。
+
+### 路径参数
+
+| 参数名 | 类型   | 必选 | 说明      |
+|--------|--------|------|-----------|
+| hdId   | string | 是   | 硬件ID    |
+
+### 查询参数
+
+| 参数名 | 类型   | 必选 | 说明        |
+|--------|--------|------|-------------|
+| token  | string | 是   | 访问令牌    |
+
+```http 连接示例
+GET /v3/wss/hd123?token=YOUR_ACCESS_TOKEN
+```
+
+<Note>
+  连接成功后需要立即发送硬件身份验证消息。
+</Note>
+</ParamField>
+
+## 身份验证
+
+连接建立后，硬件需要发送身份验证消息：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "auth",
+  "params": {
+    "hdId": "hd123",
+    "token": "YOUR_ACCESS_TOKEN"
+  },
+  "id": "auth_1"
+}
+```
+
+服务器将响应验证结果：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "hdId": "hd123",
+    "status": "authenticated"
+  },
+  "id": "auth_1"
+}
+```
+
+## 消息类型
+
+### 状态报告
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "status",
+  "params": {
+    "type": "health",
+    "data": {
+      "cpu": 45,
+      "memory": 60,
+      "temperature": 35
+    }
+  }
+}
+```
+
+### 传感器数据
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "sensor",
+  "params": {
+    "sensorId": "temp_1",
+    "type": "temperature",
+    "value": 25.6,
+    "unit": "celsius"
+  }
+}
+```
+
+### 控制命令
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "control",
+  "params": {
+    "command": "restart",
+    "target": "system",
+    "params": {}
+  }
+}
+```
+
+## 心跳机制
+
+硬件需要定期发送心跳包：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "ping",
+  "id": "ping_1"
+}
+```
+
+服务器将响应：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": "pong",
+  "id": "ping_1"
+}
+```
+
+<Note>
+  建议每30秒发送一次心跳包，超过90秒未收到心跳响应则重新连接。
+</Note>
+
+## 错误处理
+
+### 常见错误
+
+1. 硬件认证失败
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32001,
+    "message": "Hardware authentication failed",
+    "data": {
+      "reason": "Invalid hardware ID"
+    }
+  },
+  "id": "auth_1"
+}
+```
+
+2. 命令执行失败
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32603,
+    "message": "Command execution failed",
+    "data": {
+      "command": "restart",
+      "reason": "System busy"
+    }
+  },
+  "id": "cmd_1"
+}
+```
+
+### 重连策略
+
+1. 网络断开时立即尝试重连
+2. 失败后采用指数退避策略
+3. 最大重试间隔为5分钟
+4. 重连成功后重新进行硬件身份验证
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| -32001 | 硬件认证失败 |
+| -32002 | 权限不足 |
+| -32602 | 无效参数 |
+| -32603 | 内部错误 |
+</Card>

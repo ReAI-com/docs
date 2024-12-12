@@ -1,0 +1,188 @@
+---
+title: '主页工具'
+description: '主页工具服务接口，包括地址解析和OAuth认证'
+---
+
+# 主页工具
+
+## 地址解析
+
+<ParamField path="/tool/home/address" method="POST">
+地址文本智能解析服务。
+
+### 请求参数
+
+| 参数名  | 类型   | 必选 | 说明      |
+|---------|--------|------|-----------|
+| address | string | 是   | 地址文本  |
+
+<CodeGroup>
+```http 请求示例
+POST /tool/home/address
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "address": "张三 13800138000 浙江省杭州市西湖区文三路 443号"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "_input": "张三 13800138000 浙江省杭州市西湖区文三路 443号",
+    "name": "张三",
+    "phone": "13800138000",
+    "address": "浙江省,杭州市,西湖区,文三路,443号"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+
+<Note>
+  支持智能识别收件人姓名、电话号码、省市区及详细地址。
+</Note>
+</ParamField>
+
+## OAuth认证
+
+<Card title="OAuth认证概述" icon="key">
+  提供完整的OAuth 2.0认证流程支持：
+  - 匿名用户认证
+  - 授权码模式
+  - 令牌刷新
+</Card>
+
+### 匿名认证
+
+<ParamField path="/tool/home/oauth/anonymous" method="POST">
+创建匿名用户并获取访问令牌。
+
+### 请求参数
+
+| 参数名    | 类型   | 必选 | 说明        |
+|-----------|--------|------|-------------|
+| anonymous | string | 是   | 匿名标识符  |
+| passwd    | string | 是   | 密码        |
+
+<CodeGroup>
+```http 请求示例
+POST /tool/home/oauth/anonymous
+Content-Type: application/json
+
+{
+  "anonymous": "anon_123",
+  "passwd": "password123"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "user": {
+      "id": "user123",
+      "anonymous": true
+    },
+    "token": {
+      "access_token": "eyJxx...",
+      "expires_in": 3600,
+      "refresh_token": "ryJxx..."
+    }
+  },
+  "message": "Anonymous success"
+}
+```
+</CodeGroup>
+
+<Note>
+  匿名用户令牌有效期为1小时，刷新令牌有效期为30天。
+</Note>
+</ParamField>
+
+### 授权码换取令牌
+
+<ParamField path="/tool/home/oauth/token" method="POST">
+使用授权码获取访问令牌。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明        |
+|-------------|--------|------|-------------|
+| code        | string | 是   | 授权码      |
+| client_id   | string | 是   | 客户端ID    |
+
+<CodeGroup>
+```http 请求示例
+POST /tool/home/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+{
+  "grant_type": "authorization_code",
+  "code": "auth_code_123",
+  "client_id": "client_123"
+}
+```
+
+```json 成功响应
+{
+  "access_token": "eyJxx...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "ryJxx..."
+}
+```
+</CodeGroup>
+</ParamField>
+
+### 刷新访问令牌
+
+<ParamField path="/tool/home/oauth/rtoken" method="POST">
+使用刷新令牌获取新的访问令牌。
+
+### 请求参数
+
+| 参数名        | 类型   | 必选 | 说明          |
+|---------------|--------|------|---------------|
+| grant_type    | string | 是   | refresh_token |
+| refresh_token | string | 是   | 刷新令牌      |
+| client_id     | string | 是   | 客户端ID      |
+
+<CodeGroup>
+```http 请求示例
+POST /tool/home/oauth/rtoken
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer OLD_ACCESS_TOKEN
+
+{
+  "grant_type": "refresh_token",
+  "refresh_token": "ryJxx...",
+  "client_id": "client_123"
+}
+```
+
+```json 成功响应
+{
+  "access_token": "eyJxx...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "ryJxx..."
+}
+```
+</CodeGroup>
+
+<Note type="warning">
+  刷新令牌仅可使用一次，使用后会自动失效并生成新的刷新令牌。
+</Note>
+</ParamField>
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 401    | 未授权或令牌无效 |
+| 403    | 权限不足 |
+| 500    | 服务器错误 |
+</Card>

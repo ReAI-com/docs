@@ -5,37 +5,146 @@ description: 'WebSocket实时通信服务，支持用户、应用和硬件设备
 
 # WebSocket服务
 
+<Note>
+  所有WebSocket连接都需要有效的访问令牌。连接建立后使用JSON-RPC 2.0协议进行通信。
+</Note>
+
+<Card title="WebSocket功能概述" icon="bolt">
+  WebSocket服务提供实时双向通信功能，支持：
+  - 用户级别的消息推送
+  - 应用级别的消息订阅
+  - 硬件设备的实时控制
+  - 流式响应和工具调用
+</Card>
+
+## JSON-RPC协议
+
+<Card title="消息格式说明" icon="code">
+所有WebSocket消息都遵循JSON-RPC 2.0协议格式：
+
+### 请求消息格式
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "方法名",
+  "params": {
+    "key": "value"
+  },
+  "id": "请求ID"
+}
+```
+
+### 响应消息格式
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "code": 200,
+    "data": {},
+    "message": "成功"
+  },
+  "id": "请求ID"
+}
+```
+
+### 通知消息格式
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "_notify",
+  "params": {
+    "type": "通知类型",
+    "data": {}
+  }
+}
+```
+
+### 错误响应格式
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32600,
+    "message": "错误信息",
+    "data": "错误详情"
+  },
+  "id": "请求ID"
+}
+```
+</Card>
+
 ## 用户WebSocket
 
 <ParamField path="/v3/wss" method="WebSocket">
-用户级别的WebSocket连接。
+用户级别的WebSocket连接，支持消息推送和对话管理。
 
-### 连接参数
+### 连接地址
+```
+ws://api.wainao.ai/v3/wss?token=您的访问令牌
+```
 
-| 参数名 | 类型   | 说明          |
-|--------|--------|---------------|
-| token  | string | 用户访问令牌  |
+### 查询参数
 
-### 消息格式
+| 参数名 | 类型   | 必选 | 说明          |
+|--------|--------|------|---------------|
+| token  | string | 是   | 用户访问令牌  |
+| convId | string | 否   | 对话ID        |
 
-发送消息：
-```json
+<CodeGroup>
+```javascript 连接示例
+const ws = new WebSocket('ws://api.wainao.ai/v3/wss?token=您的访问令牌');
+
+ws.onopen = () => {
+  console.log('连接已建立');
+  // 发送心跳
+  ws.send('ping');
+};
+
+ws.onmessage = (event) => {
+  if (event.data === 'pong') {
+    console.log('收到心跳响应');
+    return;
+  }
+  const message = JSON.parse(event.data);
+  console.log('收到消息:', message);
+};
+```
+
+```json 请求示例
 {
-  "type": "string",    // 消息类型
-  "data": {},         // 消息数据
-  "msgId": "string"   // 消息ID
+  "jsonrpc": "2.0",
+  "method": "hardwares.switchConvId",
+  "params": {
+    "convId": "conv123",
+    "hdId": "device123"
+  },
+  "id": "req123"
 }
 ```
 
-接收消息：
-```json
+```json 响应示例
 {
-  "type": "string",    // 消息类型
-  "data": {},         // 消息数据
-  "msgId": "string",  // 消息ID
-  "timestamp": "string" // 时间戳
+  "jsonrpc": "2.0",
+  "result": {
+    "code": 200,
+    "data": {
+      "convId": "conv123",
+      "hdId": "device123"
+    },
+    "message": "切换成功"
+  },
+  "id": "req123"
 }
 ```
+</CodeGroup>
+
+<Note>
+  用户WebSocket支持以下功能：
+  - 切换对话和设备（hardwares.switchConvId）
+  - 接收消息推送（_notify）
+  - 流式响应处理
+  - 工具调用响应
+</Note>
 
 ### 错误码说明
 
@@ -45,84 +154,136 @@ description: 'WebSocket实时通信服务，支持用户、应用和硬件设备
 | 1001   | 服务端关闭 |
 | 1002   | 协议错误 |
 | 1003   | 数据类型错误 |
+| 4401   | 未授权访问 |
 </ParamField>
 
 ## 应用WebSocket
 
-<ParamField path="/v3/wss/{appId}" method="WebSocket">
-应用级别的WebSocket连接。
+<ParamField path="/v3/wss/{appId}/{toolId}" method="WebSocket">
+应用级别的WebSocket连接，支持应用间通信和工具调用。
 
 ### 路径参数
 
-| 参数名 | 类型   | 说明    |
-|--------|--------|---------|
-| appId  | string | 应用ID  |
+| 参数名 | 类型   | 必选 | 说明    |
+|--------|--------|------|---------|
+| appId  | string | 是   | 应用ID  |
+| toolId | string | 是   | 工具ID  |
 
-### 连接参数
-
-| 参数名 | 类型   | 说明          |
-|--------|--------|---------------|
-| token  | string | 应用访问令牌  |
-
-### 消息格式
-
-发送消息：
-```json
-{
-  "type": "string",    // 消息类型
-  "data": {},         // 消息数据
-  "msgId": "string"   // 消息ID
-}
+### 连接地址
+```
+ws://api.wainao.ai/v3/wss/{appId}/{toolId}?token=您的应用令牌
 ```
 
-接收消息：
-```json
+<CodeGroup>
+```javascript 连接示例
+const ws = new WebSocket('ws://api.wainao.ai/v3/wss/app123/tool456?token=您的应用令牌');
+
+ws.onopen = () => {
+  // 发送Redis操作请求
+  ws.send(JSON.stringify({
+    jsonrpc: "2.0",
+    method: "redis.set",
+    params: {
+      key: "myKey",
+      value: "myValue"
+    },
+    id: "set123"
+  }));
+};
+```
+
+```json Redis操作响应
 {
-  "type": "string",    // 消息类型
-  "data": {},         // 消息数据
-  "msgId": "string",  // 消息ID
-  "timestamp": "string" // 时间戳
+  "jsonrpc": "2.0",
+  "result": {
+    "code": 200,
+    "data": "myValue",
+    "message": "设置成功"
+  },
+  "id": "set123"
 }
 ```
+</CodeGroup>
+
+<Note>
+  应用WebSocket支持以下操作：
+  - Redis数据操作（get/set）
+  - 消息发布订阅（publish/subscribe）
+  - 工具调用和响应
+</Note>
+
+### 支持的方法
+
+| 方法名 | 说明 |
+|--------|------|
+| redis.get | 获取Redis数据 |
+| redis.set | 设置Redis数据 |
+| redis.publish | 发布消息 |
+| subscribe | 订阅消息 |
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 4401   | 未授权访问 |
+| 4000   | 未知错误 |
+| -32600 | 无效请求 |
+| -32601 | 方法未找到 |
 </ParamField>
 
 ## 硬件WebSocket
 
 <ParamField path="/v3/wss/{hdId}" method="WebSocket">
-硬件设备的WebSocket连接。
+硬件设备的WebSocket连接，支持设备控制和状态同步。
 
 ### 路径参数
 
-| 参数名 | 类型   | 说明      |
-|--------|--------|-----------|
-| hdId   | string | 硬件设备ID |
+| 参数名 | 类型   | 必选 | 说明      |
+|--------|--------|------|-----------|
+| hdId   | string | 是   | 硬件设备ID |
 
-### 连接参数
-
-| 参数名 | 类型   | 说明            |
-|--------|--------|-----------------|
-| token  | string | 硬件设备访问令牌 |
-
-### 消息格式
-
-发送消息：
-```json
-{
-  "type": "string",    // 消息类型
-  "data": {},         // 消息数据
-  "msgId": "string"   // 消息ID
-}
+### 连接地址
+```
+ws://api.wainao.ai/v3/wss/{hdId}?token=您的设备令牌
 ```
 
-接收消息：
-```json
+<CodeGroup>
+```javascript 连接示例
+const ws = new WebSocket('ws://api.wainao.ai/v3/wss/device123?token=您的设备令牌');
+
+ws.onopen = () => {
+  // 发送设备状态
+  ws.send(JSON.stringify({
+    jsonrpc: "2.0",
+    method: "device.status",
+    params: {
+      status: "online",
+      battery: 80
+    },
+    id: "status123"
+  }));
+};
+```
+
+```json 状态更新响应
 {
-  "type": "string",    // 消息类型
-  "data": {},         // 消息数据
-  "msgId": "string",  // 消息ID
-  "timestamp": "string" // 时间戳
+  "jsonrpc": "2.0",
+  "result": {
+    "code": 200,
+    "data": {
+      "status": "online",
+      "battery": 80
+    },
+    "message": "状态更新成功"
+  },
+  "id": "status123"
 }
 ```
+</CodeGroup>
+
+<Note type="warning">
+  硬件WebSocket连接会自动关联到最后一个活跃的对话。如需切换对话，请使用hardwares.switchConvId方法。
+</Note>
 
 ### 错误码说明
 
@@ -132,4 +293,13 @@ description: 'WebSocket实时通信服务，支持用户、应用和硬件设备
 | 1001   | 设备离线 |
 | 1002   | 协议错误 |
 | 1003   | 数据类型错误 |
+| 4401   | 未授权访问 |
 </ParamField>
+
+<Card title="WebSocket最佳实践" icon="lightbulb">
+  - 保持定期的心跳检测（ping/pong）
+  - 正确处理重连逻辑
+  - 使用try-catch处理JSON解析错误
+  - 注意处理流式响应的数据拼接
+  - 在连接关闭时清理相关资源
+</Card>

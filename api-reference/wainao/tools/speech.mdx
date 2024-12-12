@@ -1,0 +1,57 @@
+---
+title: '语音服务'
+description: '语音转换服务接口，支持文本转语音功能'
+---
+
+# 语音服务
+
+<Note>
+  所有语音服务接口都需要有效的访问令牌。请在请求头中包含Bearer令牌。
+</Note>
+
+## 文本转语音
+
+<ParamField path="/tool/speech" method="POST">
+语音服务支持文本转语音功能。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明    |
+|--------|--------|------|---------|
+| convId | string | 是   | 对话ID  |
+| msgId  | string | 是   | 消息ID  |
+
+<CodeGroup>
+```http 请求示例
+POST /tool/speech
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "convId": "conv123",
+  "msgId": "msg456"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": "data:audio/x-wav;base64,BASE64_ENCODED_AUDIO_DATA",
+  "message": "转换成功"
+}
+```
+</CodeGroup>
+
+<Note>
+  返回的音频数据为base64编码的MP3格式。支持中文语音合成，使用标准女声。
+</Note>
+</ParamField>
+
+<Card title="错误码说明" icon="circle-exclamation">
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 404    | 消息不存在 |
+| 422    | 语音转换失败 |
+| 500    | 服务器错误 |
+</Card>

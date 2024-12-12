@@ -1,61 +1,9 @@
 ---
-title: '工具服务'
-description: '外脑工具服务接口，包括语音服务、向量数据库工具、主页工具等'
+title: '向量数据库工具'
+description: '向量数据库操作接口，支持数据的增删改查和向量搜索'
 ---
 
-# 工具服务
-
-<Note>
-  所有工具服务接口都需要有效的访问令牌。请在请求头中包含Bearer令牌。
-</Note>
-
-<Card title="工具服务概述" icon="wrench">
-  工具服务提供多种辅助功能：
-  - 语音转换（文本转语音、语音识别）
-  - 向量数据库操作（搜索、增删改查）
-  - 主页内容管理
-  - 外脑分析工具
-</Card>
-
-## 语音服务
-
-<ParamField path="/tool/speech" method="POST">
-语音服务支持文本转语音功能。
-
-### 请求参数
-
-| 参数名 | 类型   | 必选 | 说明    |
-|--------|--------|------|---------|
-| convId | string | 是   | 对话ID  |
-| msgId  | string | 是   | 消息ID  |
-
-<CodeGroup>
-```http 请求示例
-POST /tool/speech
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-
-{
-  "convId": "conv123",
-  "msgId": "msg456"
-}
-```
-
-```json 成功响应
-{
-  "code": 200,
-  "data": "data:audio/x-wav;base64,BASE64_ENCODED_AUDIO_DATA",
-  "message": "转换成功"
-}
-```
-</CodeGroup>
-
-<Note>
-  返回的音频数据为base64编码的MP3格式。支持中文语音合成，使用标准女声。
-</Note>
-</ParamField>
-
-## 向量数据库工具
+# 向量数据库工具
 
 <Card title="向量数据库功能" icon="database">
   提供完整的向量数据库操作接口，支持：
@@ -65,7 +13,7 @@ Authorization: Bearer YOUR_TOKEN
   - 条件过滤
 </Card>
 
-### 获取数据列表
+## 获取数据列表
 
 <ParamField path="/tool/vdb/{className}" method="GET">
 获取指定数据库的数据列表。
@@ -108,7 +56,7 @@ Authorization: Bearer YOUR_TOKEN
 </CodeGroup>
 </ParamField>
 
-### 获取单条数据
+## 获取单条数据
 
 <ParamField path="/tool/vdb/{className}/{id}" method="GET">
 获取指定ID的数据详情。
@@ -142,10 +90,11 @@ Authorization: Bearer YOUR_TOKEN
 </CodeGroup>
 </ParamField>
 
-### 创建数据
+## 创建数据
 
 <ParamField path="/tool/vdb/{className}" method="POST">
 创建新的向量数据。
+
 
 ### 请求参数
 
@@ -191,7 +140,7 @@ Authorization: Bearer YOUR_TOKEN
 </CodeGroup>
 </ParamField>
 
-### 更新数据
+## 更新数据
 
 <ParamField path="/tool/vdb/{className}/{id}" method="PATCH">
 更新指定ID的数据。
@@ -231,7 +180,7 @@ Authorization: Bearer YOUR_TOKEN
 </CodeGroup>
 </ParamField>
 
-### 删除数据
+## 删除数据
 
 <ParamField path="/tool/vdb/{className}/{id}" method="DELETE">
 删除指定ID的数据。
@@ -265,7 +214,7 @@ Authorization: Bearer YOUR_TOKEN
 </Note>
 </ParamField>
 
-### 向量搜索
+## 向量搜索
 
 <ParamField path="/tool/vdb/{className}/vector" method="POST">
 基于内容进行向量相似度搜索。
@@ -335,187 +284,5 @@ Authorization: Bearer YOUR_TOKEN
 | 400    | 请求参数错误 |
 | 404    | 数据不存在 |
 | 422    | 数据处理错误 |
-| 500    | 服务器错误 |
-</Card>
-
-## 地址解析工具
-
-<ParamField path="/tool/home/address" method="POST">
-地址文本智能解析服务。
-
-### 请求参数
-
-| 参数名  | 类型   | 必选 | 说明      |
-|---------|--------|------|-----------|
-| address | string | 是   | 地址文本  |
-
-<CodeGroup>
-```http 请求示例
-POST /tool/home/address
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-
-{
-  "address": "张三 13800138000 浙江省杭州市西湖区文三路 443号"
-}
-```
-
-```json 成功响应
-{
-  "code": 200,
-  "data": {
-    "_input": "张三 13800138000 浙江省杭州市西湖区文三路 443号",
-    "name": "张三",
-    "phone": "13800138000",
-    "address": "浙江省,杭州市,西湖区,文三路,443号"
-  },
-  "message": "success"
-}
-```
-</CodeGroup>
-
-<Note>
-  支持智能识别收件人姓名、电话号码、省市区及详细地址。
-</Note>
-</ParamField>
-
-## OAuth认证服务
-
-<Card title="OAuth认证概述" icon="key">
-  提供完整的OAuth 2.0认证流程支持：
-  - 匿名用户认证
-  - 授权码模式
-  - 令牌刷新
-</Card>
-
-### 匿名认证
-
-<ParamField path="/tool/home/oauth/anonymous" method="POST">
-创建匿名用户并获取访问令牌。
-
-### 请求参数
-
-| 参数名    | 类型   | 必选 | 说明        |
-|-----------|--------|------|-------------|
-| anonymous | string | 是   | 匿名标识符  |
-| passwd    | string | 是   | 密码        |
-
-<CodeGroup>
-```http 请求示例
-POST /tool/home/oauth/anonymous
-Content-Type: application/json
-
-{
-  "anonymous": "anon_123",
-  "passwd": "password123"
-}
-```
-
-```json 成功响应
-{
-  "code": 200,
-  "data": {
-    "user": {
-      "id": "user123",
-      "anonymous": true
-    },
-    "token": {
-      "access_token": "eyJxx...",
-      "expires_in": 3600,
-      "refresh_token": "ryJxx..."
-    }
-  },
-  "message": "Anonymous success"
-}
-```
-</CodeGroup>
-
-<Note>
-  匿名用户令牌有效期为1小时，刷新令牌有效期为30天。
-</Note>
-</ParamField>
-
-### 授权码换取令牌
-
-<ParamField path="/tool/home/oauth/token" method="POST">
-使用授权码获取访问令牌。
-
-### 请求参数
-
-| 参数名      | 类型   | 必选 | 说明        |
-|-------------|--------|------|-------------|
-| code        | string | 是   | 授权码      |
-| client_id   | string | 是   | 客户端ID    |
-
-<CodeGroup>
-```http 请求示例
-POST /tool/home/oauth/token
-Content-Type: application/x-www-form-urlencoded
-
-{
-  "grant_type": "authorization_code",
-  "code": "auth_code_123",
-  "client_id": "client_123"
-}
-```
-
-```json 成功响应
-{
-  "access_token": "eyJxx...",
-  "token_type": "Bearer",
-  "expires_in": 3600,
-  "refresh_token": "ryJxx..."
-}
-```
-</CodeGroup>
-</ParamField>
-
-### 刷新访问令牌
-
-<ParamField path="/tool/home/oauth/rtoken" method="POST">
-使用刷新令牌获取新的访问令牌。
-
-### 请求参数
-
-| 参数名        | 类型   | 必选 | 说明          |
-|---------------|--------|------|---------------|
-| grant_type    | string | 是   | refresh_token |
-| refresh_token | string | 是   | 刷新令牌      |
-| client_id     | string | 是   | 客户端ID      |
-
-<CodeGroup>
-```http 请求示例
-POST /tool/home/oauth/rtoken
-Content-Type: application/x-www-form-urlencoded
-Authorization: Bearer OLD_ACCESS_TOKEN
-
-{
-  "grant_type": "refresh_token",
-  "refresh_token": "ryJxx...",
-  "client_id": "client_123"
-}
-```
-
-```json 成功响应
-{
-  "access_token": "eyJxx...",
-  "token_type": "Bearer",
-  "expires_in": 3600,
-  "refresh_token": "ryJxx..."
-}
-```
-</CodeGroup>
-
-<Note type="warning">
-  刷新令牌仅可使用一次，使用后会自动失效并生成新的刷新令牌。
-</Note>
-</ParamField>
-
-<Card title="OAuth错误码说明" icon="triangle-exclamation">
-| 错误码 | 说明 |
-|--------|------|
-| 400    | 请求参数错误 |
-| 401    | 未授权或令牌无效 |
-| 403    | 权限不足 |
 | 500    | 服务器错误 |
 </Card>

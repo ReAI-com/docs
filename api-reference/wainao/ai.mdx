@@ -5,188 +5,355 @@ description: 'AI模型和工具管理相关接口'
 
 # AI模型与工具
 
-## 获取模型列表
+<Note>
+  所有AI相关接口都需要有效的访问令牌。请确保在请求头中包含正确的Bearer令牌。
+</Note>
+
+## AI模型管理
+
+<Card title="模型管理功能" icon="microchip">
+  AI模型管理接口提供了创建、查询、更新和删除AI模型的功能。支持多种AI服务，包括OpenAI、Claude、Dify和百度。
+</Card>
+
+### 获取模型列表
 
 <ParamField path="/ai/models" method="GET">
-获取可用的AI模型列表。
+获取可用的AI模型列表，支持分页查询。
+
+<CodeGroup>
+  ```http 请求示例
+  GET /ai/models?page=1&limit=10
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "items": [
+        {
+          "id": "model123",
+          "name": "GPT-4",
+          "desc": "OpenAI的GPT-4模型",
+          "service": "openai",
+          "conf": {
+            "model": "gpt-4",
+            "temperature": 0.7
+          }
+        }
+      ],
+      "total": 1
+    },
+    "message": "获取成功"
+  }
+  ```
+</CodeGroup>
 
 ### 请求参数
 
-| 参数名 | 类型    | 说明     |
-|--------|---------|----------|
-| page   | integer | 页码     |
-| limit  | integer | 每页数量 |
+| 参数名 | 类型    | 必选 | 说明     |
+|--------|---------|------|----------|
+| page   | integer | 否   | 页码     |
+| limit  | integer | 否   | 每页数量 |
 
-### 响应格式
-
-```json
-{
-  "code": 200,
-  "data": {
-    "items": [
-      {
-        "id": "string",
-        "name": "string",
-        "desc": "string",
-        "service": "string",
-        "conf": {}
-      }
-    ],
-    "total": 0
-  },
-  "message": "获取成功"
-}
-```
 </ParamField>
 
-## 创建AI模型
+### 创建AI模型
 
 <ParamField path="/ai/models" method="POST">
-创建新的AI模型。
+创建新的AI模型配置。
 
-### 请求参数
+<CodeGroup>
+  ```json 请求体
+  {
+    "name": "GPT-4模型",
+    "desc": "OpenAI的GPT-4模型配置",
+    "service": "openai",
+    "conf": {
+      "model": "gpt-4",
+      "temperature": 0.7
+    }
+  }
+  ```
 
-```json
-{
-  "name": "string",     // 模型名称
-  "desc": "string",     // 模型描述
-  "service": "string",  // 服务类型
-  "conf": {}           // 模型配置
-}
-```
+  ```http 请求示例
+  POST /ai/models
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
 
-### 响应格式
+  {
+    "name": "GPT-4模型",
+    "desc": "OpenAI的GPT-4模型配置",
+    "service": "openai",
+    "conf": {
+      "model": "gpt-4",
+      "temperature": 0.7
+    }
+  }
+  ```
 
-```json
-{
-  "code": 200,
-  "data": {
-    "id": "string",
-    "name": "string",
-    "desc": "string",
-    "service": "string",
-    "conf": {},
-    "createdAt": "string"
-  },
-  "message": "创建成功"
-}
-```
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "id": "model123",
+      "name": "GPT-4模型",
+      "desc": "OpenAI的GPT-4模型配置",
+      "service": "openai",
+      "conf": {
+        "model": "gpt-4",
+        "temperature": 0.7
+      },
+      "createdAt": "2024-01-01T00:00:00Z"
+    },
+    "message": "创建成功"
+  }
+  ```
+</CodeGroup>
+
+<Note type="warning">
+  创建模型时请确保配置参数符合相应AI服务的要求。不同服务的配置参数可能不同。
+</Note>
 </ParamField>
 
-## 获取工具列表
+### 更新AI模型
+
+<ParamField path="/ai/models/{modelId}" method="PATCH">
+更新指定AI模型的配置信息。
+
+<CodeGroup>
+  ```json 请求体
+  {
+    "name": "更新后的模型名称",
+    "desc": "更新后的描述",
+    "service": "openai",
+    "conf": {
+      "model": "gpt-4",
+      "temperature": 0.8
+    }
+  }
+  ```
+
+  ```http 请求示例
+  PATCH /ai/models/model123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "name": "更新后的模型名称",
+    "desc": "更新后的描述",
+    "service": "openai",
+    "conf": {
+      "model": "gpt-4",
+      "temperature": 0.8
+    }
+  }
+  ```
+</CodeGroup>
+
+### 路径参数
+
+| 参数名  | 类型   | 必选 | 说明    |
+|---------|--------|------|---------|
+| modelId | string | 是   | 模型ID |
+
+</ParamField>
+
+### 删除AI模型
+
+<ParamField path="/ai/models/{modelId}" method="DELETE">
+删除指定的AI模型。
+
+<CodeGroup>
+  ```http 请求示例
+  DELETE /ai/models/model123
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "result": true
+    },
+    "message": "删除成功"
+  }
+  ```
+</CodeGroup>
+
+<Note type="warning">
+  删除模型操作不可恢复，请谨慎操作。
+</Note>
+</ParamField>
+
+## AI工具管理
+
+<Card title="工具管理功能" icon="wrench">
+  AI工具管理接口提供了创建、查询、更新和删除AI工具的功能。工具可以包含多个动作配置，支持灵活的处理流程。
+</Card>
+
+### 获取工具列表
 
 <ParamField path="/ai/tools" method="GET">
-获取可用的AI工具列表。
+获取可用的AI工具列表，支持分页查询。
+
+<CodeGroup>
+  ```http 请求示例
+  GET /ai/tools?page=1&limit=10
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "items": [
+        {
+          "id": "tool123",
+          "name": "文本分析工具",
+          "desc": "用于分析文本内容的工具",
+          "service": "text-analysis",
+          "conf": {},
+          "actions": [
+            {
+              "name": "分析情感",
+              "type": "sentiment",
+              "conf": {}
+            }
+          ]
+        }
+      ],
+      "total": 1
+    },
+    "message": "获取成功"
+  }
+  ```
+</CodeGroup>
 
 ### 请求参数
 
-| 参数名 | 类型    | 说明     |
-|--------|---------|----------|
-| page   | integer | 页码     |
-| limit  | integer | 每页数量 |
+| 参数名 | 类型    | 必选 | 说明     |
+|--------|---------|------|----------|
+| page   | integer | 否   | 页码     |
+| limit  | integer | 否   | 每页数量 |
 
-### 响应格式
-
-```json
-{
-  "code": 200,
-  "data": {
-    "items": [
-      {
-        "id": "string",
-        "name": "string",
-        "desc": "string",
-        "service": "string",
-        "conf": {},
-        "actions": []
-      }
-    ],
-    "total": 0
-  },
-  "message": "获取成功"
-}
-```
 </ParamField>
 
-
-## 创建AI工具
+### 创建AI工具
 
 <ParamField path="/ai/tools" method="POST">
 创建新的AI工具。
 
-### 请求参数
-
-```json
-{
-  "name": "string",     // 工具名称
-  "desc": "string",     // 工具描述
-  "service": "string",  // 服务类型
-  "conf": {},          // 工具配置
-  "actions": [         // 工具动作列表
-    {
-      "name": "string",
-      "type": "string",
-      "conf": {}
-    }
-  ]
-}
-```
-
-### 响应格式
-
-```json
-{
-  "code": 200,
-  "data": {
-    "id": "string",
-    "name": "string",
-    "desc": "string",
-    "service": "string",
+<CodeGroup>
+  ```json 请求体
+  {
+    "name": "文本分析工具",
+    "desc": "用于分析文本内容的工具",
+    "service": "text-analysis",
     "conf": {},
-    "actions": [],
-    "createdAt": "string"
-  },
-  "message": "创建成功"
-}
-```
+    "actions": [
+      {
+        "name": "分析情感",
+        "type": "sentiment",
+        "conf": {}
+      }
+    ]
+  }
+  ```
+
+  ```http 请求示例
+  POST /ai/tools
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "name": "文本分析工具",
+    "desc": "用于分析文本内容的工具",
+    "service": "text-analysis",
+    "conf": {},
+    "actions": [
+      {
+        "name": "分析情感",
+        "type": "sentiment",
+        "conf": {}
+      }
+    ]
+  }
+  ```
+</CodeGroup>
+
+<Note>
+  工具可以配置多个动作，每个动作都需要指定名称、类型和配置。
+</Note>
 </ParamField>
 
-## 执行工具
+### 执行工具
 
 <ParamField path="/ai/tools/{toolId}/run" method="POST">
 执行指定的AI工具。
 
+<CodeGroup>
+  ```json 请求体
+  {
+    "content": "需要分析的文本内容",
+    "convId": "conversation123",
+    "msgId": "message123",
+    "hook": "before",
+    "data": {},
+    "send": true
+  }
+  ```
+
+  ```http 请求示例
+  POST /ai/tools/tool123/run
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+  {
+    "content": "需要分析的文本内容",
+    "convId": "conversation123",
+    "msgId": "message123",
+    "hook": "before",
+    "data": {},
+    "send": true
+  }
+  ```
+
+  ```json 成功响应
+  {
+    "code": 200,
+    "data": {
+      "result": "分析结果",
+      "msgId": "message123"
+    },
+    "message": "执行成功"
+  }
+  ```
+</CodeGroup>
+
 ### 请求参数
 
-```json
-{
-  "content": "string",  // 执行内容
-  "convId": "string",   // 对话ID
-  "msgId": "string",    // 消息ID
-  "hook": "string",     // 钩子类型
-  "data": {},          // 附加数据
-  "send": true         // 是否发送消息
-}
-```
+| 参数名  | 类型    | 必选 | 说明         |
+|---------|---------|------|--------------|
+| content | string  | 是   | 执行内容     |
+| convId  | string  | 是   | 对话ID      |
+| msgId   | string  | 是   | 消息ID      |
+| hook    | string  | 是   | 钩子类型     |
+| data    | object  | 否   | 附加数据     |
+| send    | boolean | 否   | 是否发送消息 |
 
-### 响应格式
-
-```json
-{
-  "code": 200,
-  "data": {
-    "result": "string",
-    "msgId": "string"
-  },
-  "message": "执行成功"
-}
-```
+<Note type="warning">
+  执行工具时请确保提供了正确的对话ID和消息ID，这些信息用于追踪工具执行的上下文。
+</Note>
 
 ### 错误码说明
 
+<Card title="错误码" icon="circle-exclamation">
 | 错误码 | 说明 |
 |--------|------|
 | 400    | 请求参数错误 |
 | 404    | 工具不存在 |
 | 500    | 服务器错误 |
+</Card>
+
 </ParamField>
