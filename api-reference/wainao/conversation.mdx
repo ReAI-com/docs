@@ -1,0 +1,166 @@
+---
+title: '对话管理'
+description: '对话管理相关接口，包括创建对话、发送消息、获取历史记录等'
+---
+
+# 对话管理
+
+## 创建对话
+
+<ParamField path="/conversation" method="POST">
+创建新的对话。
+
+### 请求参数
+
+```json
+{
+  "botId": "string",    // 机器人ID
+  "title": "string",    // 对话标题
+  "content": "string"   // 初始消息内容
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "id": "string",
+    "botId": "string",
+    "title": "string",
+    "createdAt": "string"
+  },
+  "message": "创建成功"
+}
+```
+</ParamField>
+
+## 获取对话列表
+
+<ParamField path="/conversation" method="GET">
+获取对话列表。
+
+### 请求参数
+
+| 参数名 | 类型    | 说明     |
+|--------|---------|----------|
+| page   | integer | 页码     |
+| limit  | integer | 每页数量 |
+| botId  | string  | 机器人ID |
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "string",
+        "botId": "string",
+        "title": "string",
+        "createdAt": "string",
+        "updatedAt": "string"
+      }
+    ],
+    "total": 0
+  },
+  "message": "获取成功"
+}
+```
+</ParamField>
+
+## 获取对话消息
+
+<ParamField path="/conversation/{convId}/messages" method="GET">
+获取指定对话的消息历史。
+
+### 路径参数
+
+| 参数名  | 类型   | 说明    |
+|---------|--------|---------|
+| convId  | string | 对话ID  |
+
+### 请求参数
+
+| 参数名 | 类型    | 说明     |
+|--------|---------|----------|
+| page   | integer | 页码     |
+| limit  | integer | 每页数量 |
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "string",
+        "convId": "string",
+        "content": "string",
+        "role": "string",
+        "createdAt": "string"
+      }
+    ],
+    "total": 0
+  },
+  "message": "获取成功"
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 404    | 对话不存在 |
+| 500    | 服务器错误 |
+</ParamField>
+
+## 发送消息
+
+<ParamField path="/conversation/{convId}/messages" method="POST">
+向指定对话发送新消息。
+
+### 路径参数
+
+| 参数名  | 类型   | 说明    |
+|---------|--------|---------|
+| convId  | string | 对话ID  |
+
+### 请求参数
+
+```json
+{
+  "content": "string",   // 消息内容
+  "role": "string",     // 发送者角色
+  "hook": "string",     // 钩子类型
+  "data": {}           // 附加数据
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "id": "string",
+    "convId": "string",
+    "content": "string",
+    "role": "string",
+    "createdAt": "string"
+  },
+  "message": "发送成功"
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 404    | 对话不存在 |
+| 500    | 服务器错误 |
+</ParamField>

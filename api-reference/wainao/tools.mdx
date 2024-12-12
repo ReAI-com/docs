@@ -1,0 +1,141 @@
+---
+title: '工具服务'
+description: '外脑工具服务接口，包括语音服务、向量数据库工具、主页工具等'
+---
+
+# 工具服务
+
+## 语音服务
+
+<ParamField path="/tool/speech" method="POST">
+文本转语音服务。
+
+### 请求参数
+
+```json
+{
+  "text": "string",    // 待转换文本
+  "voice": "string"    // 语音类型（可选）
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "url": "string",   // 语音文件URL
+    "duration": 0      // 语音时长（秒）
+  },
+  "message": "转换成功"
+}
+```
+</ParamField>
+
+## 向量数据库工具
+
+<ParamField path="/tool/vdb/search" method="POST">
+向量数据库搜索。
+
+### 请求参数
+
+```json
+{
+  "query": "string",   // 搜索查询
+  "limit": 10,        // 返回结果数量
+  "filter": {}        // 过滤条件
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "string",
+        "content": "string",
+        "score": 0
+      }
+    ],
+    "total": 0
+  },
+  "message": "搜索成功"
+}
+```
+</ParamField>
+
+## 主页工具
+
+<ParamField path="/tool/home/recommend" method="GET">
+获取推荐内容。
+
+### 请求参数
+
+| 参数名 | 类型    | 说明     |
+|--------|---------|----------|
+| page   | integer | 页码     |
+| limit  | integer | 每页数量 |
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "string",
+        "title": "string",
+        "desc": "string",
+        "type": "string",
+        "createdAt": "string"
+      }
+    ],
+    "total": 0
+  },
+  "message": "获取成功"
+}
+```
+</ParamField>
+
+## 外脑工具
+
+<ParamField path="/tool/wainao/analyze" method="POST">
+内容分析工具。
+
+### 请求参数
+
+```json
+{
+  "content": "string",  // 分析内容
+  "type": "string",    // 分析类型
+  "options": {}        // 分析选项
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "result": "string",
+    "tags": [],
+    "summary": "string"
+  },
+  "message": "分析成功"
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 422    | 内容处理错误 |
+| 500    | 服务器错误 |
+</ParamField>

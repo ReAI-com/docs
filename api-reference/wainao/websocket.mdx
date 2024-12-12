@@ -1,0 +1,135 @@
+---
+title: 'WebSocket服务'
+description: 'WebSocket实时通信服务，支持用户、应用和硬件设备的实时消息'
+---
+
+# WebSocket服务
+
+## 用户WebSocket
+
+<ParamField path="/v3/wss" method="WebSocket">
+用户级别的WebSocket连接。
+
+### 连接参数
+
+| 参数名 | 类型   | 说明          |
+|--------|--------|---------------|
+| token  | string | 用户访问令牌  |
+
+### 消息格式
+
+发送消息：
+```json
+{
+  "type": "string",    // 消息类型
+  "data": {},         // 消息数据
+  "msgId": "string"   // 消息ID
+}
+```
+
+接收消息：
+```json
+{
+  "type": "string",    // 消息类型
+  "data": {},         // 消息数据
+  "msgId": "string",  // 消息ID
+  "timestamp": "string" // 时间戳
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 1000   | 正常关闭 |
+| 1001   | 服务端关闭 |
+| 1002   | 协议错误 |
+| 1003   | 数据类型错误 |
+</ParamField>
+
+## 应用WebSocket
+
+<ParamField path="/v3/wss/{appId}" method="WebSocket">
+应用级别的WebSocket连接。
+
+### 路径参数
+
+| 参数名 | 类型   | 说明    |
+|--------|--------|---------|
+| appId  | string | 应用ID  |
+
+### 连接参数
+
+| 参数名 | 类型   | 说明          |
+|--------|--------|---------------|
+| token  | string | 应用访问令牌  |
+
+### 消息格式
+
+发送消息：
+```json
+{
+  "type": "string",    // 消息类型
+  "data": {},         // 消息数据
+  "msgId": "string"   // 消息ID
+}
+```
+
+接收消息：
+```json
+{
+  "type": "string",    // 消息类型
+  "data": {},         // 消息数据
+  "msgId": "string",  // 消息ID
+  "timestamp": "string" // 时间戳
+}
+```
+</ParamField>
+
+## 硬件WebSocket
+
+<ParamField path="/v3/wss/{hdId}" method="WebSocket">
+硬件设备的WebSocket连接。
+
+### 路径参数
+
+| 参数名 | 类型   | 说明      |
+|--------|--------|-----------|
+| hdId   | string | 硬件设备ID |
+
+### 连接参数
+
+| 参数名 | 类型   | 说明            |
+|--------|--------|-----------------|
+| token  | string | 硬件设备访问令牌 |
+
+### 消息格式
+
+发送消息：
+```json
+{
+  "type": "string",    // 消息类型
+  "data": {},         // 消息数据
+  "msgId": "string"   // 消息ID
+}
+```
+
+接收消息：
+```json
+{
+  "type": "string",    // 消息类型
+  "data": {},         // 消息数据
+  "msgId": "string",  // 消息ID
+  "timestamp": "string" // 时间戳
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 1000   | 正常关闭 |
+| 1001   | 设备离线 |
+| 1002   | 协议错误 |
+| 1003   | 数据类型错误 |
+</ParamField>

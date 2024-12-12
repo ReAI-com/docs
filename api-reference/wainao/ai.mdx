@@ -1,0 +1,192 @@
+---
+title: 'AI模型与工具'
+description: 'AI模型和工具管理相关接口'
+---
+
+# AI模型与工具
+
+## 获取模型列表
+
+<ParamField path="/ai/models" method="GET">
+获取可用的AI模型列表。
+
+### 请求参数
+
+| 参数名 | 类型    | 说明     |
+|--------|---------|----------|
+| page   | integer | 页码     |
+| limit  | integer | 每页数量 |
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "string",
+        "name": "string",
+        "desc": "string",
+        "service": "string",
+        "conf": {}
+      }
+    ],
+    "total": 0
+  },
+  "message": "获取成功"
+}
+```
+</ParamField>
+
+## 创建AI模型
+
+<ParamField path="/ai/models" method="POST">
+创建新的AI模型。
+
+### 请求参数
+
+```json
+{
+  "name": "string",     // 模型名称
+  "desc": "string",     // 模型描述
+  "service": "string",  // 服务类型
+  "conf": {}           // 模型配置
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "desc": "string",
+    "service": "string",
+    "conf": {},
+    "createdAt": "string"
+  },
+  "message": "创建成功"
+}
+```
+</ParamField>
+
+## 获取工具列表
+
+<ParamField path="/ai/tools" method="GET">
+获取可用的AI工具列表。
+
+### 请求参数
+
+| 参数名 | 类型    | 说明     |
+|--------|---------|----------|
+| page   | integer | 页码     |
+| limit  | integer | 每页数量 |
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "string",
+        "name": "string",
+        "desc": "string",
+        "service": "string",
+        "conf": {},
+        "actions": []
+      }
+    ],
+    "total": 0
+  },
+  "message": "获取成功"
+}
+```
+</ParamField>
+
+
+## 创建AI工具
+
+<ParamField path="/ai/tools" method="POST">
+创建新的AI工具。
+
+### 请求参数
+
+```json
+{
+  "name": "string",     // 工具名称
+  "desc": "string",     // 工具描述
+  "service": "string",  // 服务类型
+  "conf": {},          // 工具配置
+  "actions": [         // 工具动作列表
+    {
+      "name": "string",
+      "type": "string",
+      "conf": {}
+    }
+  ]
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "desc": "string",
+    "service": "string",
+    "conf": {},
+    "actions": [],
+    "createdAt": "string"
+  },
+  "message": "创建成功"
+}
+```
+</ParamField>
+
+## 执行工具
+
+<ParamField path="/ai/tools/{toolId}/run" method="POST">
+执行指定的AI工具。
+
+### 请求参数
+
+```json
+{
+  "content": "string",  // 执行内容
+  "convId": "string",   // 对话ID
+  "msgId": "string",    // 消息ID
+  "hook": "string",     // 钩子类型
+  "data": {},          // 附加数据
+  "send": true         // 是否发送消息
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "result": "string",
+    "msgId": "string"
+  },
+  "message": "执行成功"
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 404    | 工具不存在 |
+| 500    | 服务器错误 |
+</ParamField>

@@ -1,0 +1,189 @@
+---
+title: '机器人管理'
+description: '机器人管理相关接口，包括创建、获取、更新和删除机器人'
+---
+
+# 机器人管理
+
+## 获取机器人列表
+
+<ParamField path="/bot" method="GET">
+获取机器人列表。
+
+### 请求参数
+
+| 参数名 | 类型    | 说明     |
+|--------|---------|----------|
+| page   | integer | 页码     |
+| limit  | integer | 每页数量 |
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "string",
+        "name": "string",
+        "avatar": "string",
+        "desc": "string",
+        "modelId": "string",
+        "createdAt": "string"
+      }
+    ],
+    "total": 0
+  },
+  "message": "获取成功"
+}
+```
+</ParamField>
+
+## 创建机器人
+
+<ParamField path="/bot" method="POST">
+创建新的机器人。
+
+### 请求参数
+
+```json
+{
+  "name": "string",     // 机器人名称
+  "avatar": "string",   // 头像URL
+  "desc": "string",     // 描述
+  "modelId": "string"   // AI模型ID
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "avatar": "string",
+    "desc": "string",
+    "modelId": "string",
+    "createdAt": "string"
+  },
+  "message": "创建成功"
+}
+```
+</ParamField>
+
+## 获取机器人详情
+
+<ParamField path="/bot/{botId}" method="GET">
+获取指定机器人的详细信息。
+
+### 路径参数
+
+| 参数名 | 类型   | 说明      |
+|--------|--------|-----------|
+| botId  | string | 机器人ID  |
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "avatar": "string",
+    "desc": "string",
+    "modelId": "string",
+    "createdAt": "string",
+    "updatedAt": "string"
+  },
+  "message": "获取成功"
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 404    | 机器人不存在 |
+| 500    | 服务器错误 |
+</ParamField>
+
+## 更新机器人
+
+<ParamField path="/bot/{botId}" method="PUT">
+更新指定机器人的信息。
+
+### 路径参数
+
+| 参数名 | 类型   | 说明      |
+|--------|--------|-----------|
+| botId  | string | 机器人ID  |
+
+### 请求参数
+
+```json
+{
+  "name": "string",     // 机器人名称
+  "avatar": "string",   // 头像URL
+  "desc": "string",     // 描述
+  "modelId": "string"   // AI模型ID
+}
+```
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "avatar": "string",
+    "desc": "string",
+    "modelId": "string",
+    "updatedAt": "string"
+  },
+  "message": "更新成功"
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 400    | 请求参数错误 |
+| 404    | 机器人不存在 |
+| 500    | 服务器错误 |
+</ParamField>
+
+## 删除机器人
+
+<ParamField path="/bot/{botId}" method="DELETE">
+删除指定的机器人。
+
+### 路径参数
+
+| 参数名 | 类型   | 说明      |
+|--------|--------|-----------|
+| botId  | string | 机器人ID  |
+
+### 响应格式
+
+```json
+{
+  "code": 200,
+  "data": null,
+  "message": "删除成功"
+}
+```
+
+### 错误码说明
+
+| 错误码 | 说明 |
+|--------|------|
+| 404    | 机器人不存在 |
+| 500    | 服务器错误 |
+</ParamField>
