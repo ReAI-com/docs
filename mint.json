@@ -69,17 +69,37 @@
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "WaiNao API",
       "pages": [
-        "api-reference/introduction"
+        "api-reference/wainao/introduction",
+        "api-reference/wainao/authentication"
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "核心服务",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/wainao/user",
+        "api-reference/wainao/ai",
+        "api-reference/wainao/bot",
+        "api-reference/wainao/conversation"
+      ]
+    },
+    {
+      "group": "WebSocket服务",
+      "pages": [
+        "api-reference/wainao/websocket/introduction",
+        "api-reference/wainao/websocket/user",
+        "api-reference/wainao/websocket/app",
+        "api-reference/wainao/websocket/hardware"
+      ]
+    },
+    {
+      "group": "工具服务",
+      "pages": [
+        "api-reference/wainao/tools/speech",
+        "api-reference/wainao/tools/vdb",
+        "api-reference/wainao/tools/home",
+        "api-reference/wainao/tools/wainao"
       ]
     }
   ],
