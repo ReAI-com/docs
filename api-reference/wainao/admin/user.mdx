@@ -1,0 +1,232 @@
+---
+title: '用户管理'
+description: '管理员用户管理接口，提供用户账户的管理功能'
+---
+
+# 用户管理
+
+<Note>
+  用户管理接口用于管理用户账户。所有接口都需要管理员权限。
+</Note>
+
+## 获取用户列表
+
+<ParamField path="/admin/user/list" method="GET">
+获取用户列表。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明         |
+|----------|---------|------|--------------|
+| page     | integer | 否   | 页码，默认1  |
+| size     | integer | 否   | 每页数量     |
+| role     | string  | 否   | 用户角色     |
+| status   | string  | 否   | 账户状态     |
+
+<CodeGroup>
+```http 请求示例
+GET /admin/user/list?page=1&size=10&role=user
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "user_123",
+        "username": "张三",
+        "email": "zhangsan@example.com",
+        "role": "user",
+        "status": "active",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取用户数量
+
+<ParamField path="/admin/user/count" method="GET">
+获取用户总数。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| role   | string | 否   | 用户角色 |
+| status | string | 否   | 账户状态 |
+
+<CodeGroup>
+```http 请求示例
+GET /admin/user/count?role=user&status=active
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "count": 100,
+    "breakdown": {
+      "active": 80,
+      "inactive": 20
+    }
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取用户详情
+
+<ParamField path="/admin/user/:id" method="GET">
+获取指定用户的详细信息。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 用户ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /admin/user/user_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "user_123",
+    "username": "张三",
+    "email": "zhangsan@example.com",
+    "phone": "13800138000",
+    "role": "user",
+    "status": "active",
+    "profile": {
+      "avatar": "https://example.com/avatar.jpg",
+      "bio": "这是个人简介"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新用户信息
+
+<ParamField path="/admin/user/:id" method="PUT">
+更新指定用户的信息。
+
+### 请求参数
+
+| 参数名   | 类型   | 必选 | 说明     |
+|----------|--------|------|----------|
+| id       | string | 是   | 用户ID   |
+| username | string | 否   | 用户名   |
+| email    | string | 否   | 邮箱     |
+| phone    | string | 否   | 电话     |
+| status   | string | 否   | 账户状态 |
+| profile  | object | 否   | 用户资料 |
+
+<CodeGroup>
+```http 请求示例
+PUT /admin/user/user_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "username": "李四",
+  "email": "lisi@example.com",
+  "status": "inactive",
+  "profile": {
+    "bio": "更新后的个人简介"
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "user_123",
+    "username": "李四",
+    "email": "lisi@example.com",
+    "status": "inactive",
+    "profile": {
+      "avatar": "https://example.com/avatar.jpg",
+      "bio": "更新后的个人简介"
+    },
+    "updated_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 切换用户身份
+
+<ParamField path="/admin/user/:id/become" method="POST">
+切换到指定用户的身份。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 用户ID   |
+
+<CodeGroup>
+```http 请求示例
+POST /admin/user/user_123/become
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "token": "new_user_token",
+    "expires_in": 3600,
+    "user": {
+      "id": "user_123",
+      "username": "李四",
+      "role": "user"
+    }
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足（需要管理员权限）|
+| 404    | 用户不存在               |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>

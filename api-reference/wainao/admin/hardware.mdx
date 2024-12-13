@@ -1,0 +1,193 @@
+---
+title: '硬件管理'
+description: '管理员硬件管理接口，提供硬件设备的管理功能'
+---
+
+# 硬件管理
+
+<Note>
+  硬件管理接口用于管理硬件设备。所有接口都需要管理员权限。
+</Note>
+
+## 获取硬件列表
+
+<ParamField path="/admin/hardware/list" method="GET">
+获取硬件设备列表。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明         |
+|----------|---------|------|--------------|
+| page     | integer | 否   | 页码，默认1  |
+| size     | integer | 否   | 每页数量     |
+| status   | string  | 否   | 设备状态     |
+
+<CodeGroup>
+```http 请求示例
+GET /admin/hardware/list?page=1&size=10&status=active
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "hw_123",
+        "name": "测试设备",
+        "status": "active",
+        "sim_card": {
+          "number": "13800138000",
+          "status": "active"
+        },
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新硬件信息
+
+<ParamField path="/admin/hardware/:id" method="PUT">
+更新指定硬件的信息。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| id          | string | 是   | 硬件ID       |
+| name        | string | 否   | 硬件名称     |
+| description | string | 否   | 硬件描述     |
+| config      | object | 否   | 硬件配置     |
+
+<CodeGroup>
+```http 请求示例
+PUT /admin/hardware/hw_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "更新后的设备",
+  "description": "这是更新后的设备描述",
+  "config": {
+    "type": "sensor",
+    "model": "v2.0"
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "hw_123",
+    "name": "更新后的设备",
+    "description": "这是更新后的设备描述",
+    "status": "active",
+    "config": {
+      "type": "sensor",
+      "model": "v2.0"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 同步SIM卡信息
+
+<ParamField path="/admin/hardware/:id/sync_sim" method="POST">
+同步指定硬件的SIM卡信息。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 硬件ID   |
+
+<CodeGroup>
+```http 请求示例
+POST /admin/hardware/hw_123/sync_sim
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "hw_123",
+    "sim_card": {
+      "number": "13800138000",
+      "status": "active",
+      "data_usage": 1024,
+      "last_sync": "2024-01-20T12:00:00Z"
+    }
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 重置硬件
+
+<ParamField path="/admin/hardware/:id/reset" method="POST">
+重置指定的硬件设备。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 硬件ID   |
+| mode   | string | 否   | 重置模式 |
+
+<CodeGroup>
+```http 请求示例
+POST /admin/hardware/hw_123/reset
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "mode": "factory"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "hw_123",
+    "status": "resetting",
+    "reset_time": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足（需要管理员权限）|
+| 404    | 硬件不存在               |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>

@@ -1,0 +1,314 @@
+---
+title: '硬件管理'
+description: '开发者硬件管理接口，提供硬件设备的管理功能'
+---
+
+# 硬件管理
+
+<Note>
+  硬件管理接口用于管理硬件设备。所有接口都需要开发者权限。
+</Note>
+
+## 获取硬件列表
+
+<ParamField path="/dev/hardware/list" method="GET">
+获取硬件列表。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明         |
+|----------|---------|------|--------------|
+| page     | integer | 否   | 页码，默认1  |
+| size     | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/hardware/list?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "hw_123",
+        "name": "测试设备",
+        "status": "online",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取硬件详情
+
+<ParamField path="/dev/hardware/:id" method="GET">
+获取指定硬件的详细信息。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 硬件ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/hardware/hw_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "hw_123",
+    "name": "测试设备",
+    "description": "测试用硬件设备",
+    "status": "online",
+    "config": {
+      "type": "sensor",
+      "model": "v1.0"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 创建硬件
+
+<ParamField path="/dev/hardware" method="POST">
+创建新的硬件。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| name        | string | 是   | 硬件名称     |
+| description | string | 否   | 硬件描述     |
+| config      | object | 否   | 硬件配置     |
+
+<CodeGroup>
+```http 请求示例
+POST /dev/hardware
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "新硬件",
+  "description": "这是一个新硬件",
+  "config": {
+    "type": "sensor",
+    "model": "v1.0"
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "hw_124",
+    "name": "新硬件",
+    "description": "这是一个新硬件",
+    "status": "offline",
+    "config": {
+      "type": "sensor",
+      "model": "v1.0"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新硬件
+
+<ParamField path="/dev/hardware/:id" method="PUT">
+更新指定硬件的信息。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| id          | string | 是   | 硬件ID       |
+| name        | string | 否   | 硬件名称     |
+| description | string | 否   | 硬件描述     |
+| config      | object | 否   | 硬件配置     |
+
+<CodeGroup>
+```http 请求示例
+PUT /dev/hardware/hw_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "更新后的硬件",
+  "description": "这是更新后的硬件描述"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "hw_124",
+    "name": "更新后的硬件",
+    "description": "这是更新后的硬件描述",
+    "status": "offline",
+    "config": {
+      "type": "sensor",
+      "model": "v1.0"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 删除硬件
+
+<ParamField path="/dev/hardware/:id" method="DELETE">
+删除指定的硬件。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 硬件ID   |
+
+<CodeGroup>
+```http 请求示例
+DELETE /dev/hardware/hw_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": null,
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取硬件日志
+
+<ParamField path="/dev/hardware/:id/logs" method="GET">
+获取指定硬件的日志记录。
+
+### 请求参数
+
+| 参数名    | 类型    | 必选 | 说明           |
+|-----------|---------|------|----------------|
+| id        | string  | 是   | 硬件ID         |
+| page      | integer | 否   | 页码，默认1    |
+| size      | integer | 否   | 每页数量       |
+| start_time| string  | 否   | 开始时间       |
+| end_time  | string  | 否   | 结束时间       |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/hardware/hw_123/logs?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "log_123",
+        "hardware_id": "hw_123",
+        "type": "info",
+        "content": "设备启动",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 推送硬件日志
+
+<ParamField path="/dev/hardware/:id/logs" method="POST">
+向指定硬件推送日志。
+
+### 请求参数
+
+| 参数名   | 类型   | 必选 | 说明         |
+|----------|--------|------|--------------|
+| id       | string | 是   | 硬件ID       |
+| type     | string | 是   | 日志类型     |
+| content  | string | 是   | 日志内容     |
+
+<CodeGroup>
+```http 请求示例
+POST /dev/hardware/hw_123/logs
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "type": "info",
+  "content": "设备状态更新"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "log_124",
+    "hardware_id": "hw_123",
+    "type": "info",
+    "content": "设备状态更新",
+    "created_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足（需要开发者权限）|
+| 404    | 硬件不存在               |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>

@@ -1,0 +1,153 @@
+---
+title: '开发者服务'
+description: '开发者服务接口，提供应用、工具、模型等资源的管理功能'
+---
+
+# 开发者服务
+
+<Card title="开发者服务概述" icon="code">
+  开发者服务提供了一系列API，用于管理和操作外脑平台的各种资源，包括应用、工具、模型、任务等。这些API需要开发者权限才能访问。
+</Card>
+
+<Note>
+  所有开发者服务接口都需要有效的访问令牌，并且调用者必须具有开发者权限。请在请求头中包含Bearer令牌。
+</Note>
+
+## 通用接口
+
+### 获取资源模式
+
+<ParamField path="/dev/schema" method="GET">
+获取指定资源类型的数据模式。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| type   | string | 是   | 资源类型 |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/schema?type=app
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "type": "app",
+    "properties": {
+      "id": { "type": "string" },
+      "name": { "type": "string" },
+      "description": { "type": "string" },
+      "config": { "type": "object" }
+    },
+    "required": ["name"]
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+### 检查资源指针
+
+<ParamField path="/dev/pointer" method="GET">
+检查资源指针的有效性。
+
+### 请求参数
+
+| 参数名   | 类型   | 必选 | 说明       |
+|----------|--------|------|------------|
+| type     | string | 是   | 资源类型   |
+| pointer  | string | 是   | 资源指针   |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/pointer?type=app&pointer=app_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "valid": true,
+    "type": "app",
+    "pointer": "app_123"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+### 获取资源列表
+
+<ParamField path="/dev/list" method="GET">
+获取指定类型的资源列表。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明         |
+|----------|---------|------|--------------|
+| type     | string  | 是   | 资源类型     |
+| page     | integer | 否   | 页码，默认1  |
+| size     | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/list?type=app&page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "app_123",
+        "name": "测试应用",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足（需要开发者权限）|
+| 404    | 资源不存在               |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>
+
+## 开发者服务分类
+
+开发者服务包含以下几类API：
+
+1. [应用管理](/api-reference/wainao/developer/app) - 管理外脑应用
+2. [工具管理](/api-reference/wainao/developer/tool) - 管理工具资源
+3. [模型管理](/api-reference/wainao/developer/model) - 管理AI模型
+4. [任务管理](/api-reference/wainao/developer/task) - 管理后台任务
+5. [对话管理](/api-reference/wainao/developer/conv) - 管理对话资源
+6. [机器人管理](/api-reference/wainao/developer/bot) - 管理机器人
+7. [硬件管理](/api-reference/wainao/developer/hardware) - 管理硬件设备
+8. [向量数据库](/api-reference/wainao/developer/vdb) - 管理向量数据
