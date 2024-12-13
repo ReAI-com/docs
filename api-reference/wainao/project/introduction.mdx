@@ -1,0 +1,568 @@
+---
+title: 'Project API'
+description: 'Project API 提供了对 AI 工作流项目的管理功能'
+---
+
+# Project API
+
+<Note>
+  Project API 提供了对 AI 工作流项目的创建、管理和部署等功能。这些接口允许你管理整个项目的生命周期，包括创建新项目、更新项目信息、查看项目运行记录和部署状态等。
+</Note>
+
+## 创建项目
+
+<ParamField path="/project" method="POST">
+创建新的 AI 工作流项目。
+
+### 请求参数
+
+| 参数名    | 类型     | 必选 | 说明         |
+|-----------|----------|------|--------------|
+| template  | string   | 否   | 项目模板     |
+| name      | string   | 是   | 项目名称     |
+| tools     | string[] | 是   | 使用的工具   |
+| access    | string   | 是   | 访问权限     |
+
+<CodeGroup>
+```http 请求示例
+POST /project
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "新项目",
+  "template": "chat-bot",
+  "tools": ["gpt-3.5", "stable-diffusion"],
+  "access": "private"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "project_123",
+    "name": "新项目",
+    "template": "chat-bot",
+    "tools": ["gpt-3.5", "stable-diffusion"],
+    "access": "private",
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取项目列表
+
+<ParamField path="/project/list" method="GET">
+获取项目列表。
+
+### 请求参数
+
+| 参数名 | 类型    | 必选 | 说明         |
+|--------|---------|------|--------------|
+| page   | integer | 否   | 页码，默认1  |
+| size   | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /project/list?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "list": [
+      {
+        "id": "project_123",
+        "name": "新项目",
+        "template": "chat-bot",
+        "tools": ["gpt-3.5", "stable-diffusion"],
+        "access": "private",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "count": 1
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取项目详情
+
+<ParamField path="/project/:projectId" method="GET">
+获取指定项目的详细信息。
+
+### 请求参数
+
+| 参数名    | 类型   | 必选 | 说明     |
+|-----------|--------|------|----------|
+| projectId | string | 是   | 项目ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /project/project_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "project_123",
+    "name": "新项目",
+    "template": "chat-bot",
+    "tools": ["gpt-3.5", "stable-diffusion"],
+    "access": "private",
+    "blocks": [
+      {
+        "id": "block_123",
+        "name": "对话模块"
+      }
+    ],
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新项目
+
+<ParamField path="/project/:projectId" method="PUT">
+更新指定项目的信息。
+
+### 请求参数
+
+| 参数名      | 类型     | 必选 | 说明         |
+|-------------|----------|------|--------------|
+| projectId   | string   | 是   | 项目ID       |
+| name        | string   | 否   | 项目名称     |
+| description | string   | 否   | 项目描述     |
+| tools       | string[] | 否   | 使用的工具   |
+| access      | string   | 否   | 访问权限     |
+
+<CodeGroup>
+```http 请求示例
+PUT /project/project_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "更新后的项目",
+  "description": "这是更新后的项目描述",
+  "access": "public"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "project_123",
+    "name": "更新后的项目",
+    "description": "这是更新后的项目描述",
+    "template": "chat-bot",
+    "tools": ["gpt-3.5", "stable-diffusion"],
+    "access": "public",
+    "updated_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 删除项目
+
+<ParamField path="/project/:projectId" method="DELETE">
+删除指定的项目。
+
+### 请求参数
+
+| 参数名    | 类型   | 必选 | 说明     |
+|-----------|--------|------|----------|
+| projectId | string | 是   | 项目ID   |
+
+<CodeGroup>
+```http 请求示例
+DELETE /project/project_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": null,
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取项目运行记录
+
+<ParamField path="/project/:projectId/runs" method="GET">
+获取项目的运行记录。
+
+### 请求参数
+
+| 参数名    | 类型    | 必选 | 说明         |
+|-----------|---------|------|--------------|
+| projectId | string  | 是   | 项目ID       |
+| page      | integer | 否   | 页码，默认1  |
+| size      | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /project/project_123/runs?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "run_123",
+        "block_id": "block_123",
+        "status": "success",
+        "start_time": "2024-01-20T12:00:00Z",
+        "end_time": "2024-01-20T12:00:10Z",
+        "result": {
+          "output": "运行结果"
+        }
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取项目部署列表
+
+<ParamField path="/project/:projectId/deployments" method="GET">
+获取项目的部署列表。
+
+### 请求参数
+
+| 参数名    | 类型    | 必选 | 说明         |
+|-----------|---------|------|--------------|
+| projectId | string  | 是   | 项目ID       |
+| page      | integer | 否   | 页码，默认1  |
+| size      | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /project/project_123/deployments?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "deploy_123",
+        "block_id": "block_123",
+        "version": "1.0.0",
+        "status": "active",
+        "url": "https://api.example.com/v1/blocks/block_123",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取部署详情
+
+<ParamField path="/project/deployment/:bid" method="GET">
+获取指定块的部署详情。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明   |
+|--------|--------|------|--------|
+| bid    | string | 是   | 块ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /project/deployment/block_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "deploy_123",
+    "block_id": "block_123",
+    "version": "1.0.0",
+    "status": "active",
+    "url": "https://api.example.com/v1/blocks/block_123",
+    "config": {
+      "inputs": [
+        {
+          "name": "text",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "access": "public",
+      "deployType": "api"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 安装块
+
+<ParamField path="/project/:projectId/install/:blockId" method="POST">
+在项目中安装指定的块。
+
+### 请求参数
+
+| 参数名    | 类型   | 必选 | 说明     |
+|-----------|--------|------|----------|
+| projectId | string | 是   | 项目ID   |
+| blockId   | string | 是   | 块ID     |
+
+<CodeGroup>
+```http 请求示例
+POST /project/project_123/install/block_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "block_124",
+    "project_id": "project_123",
+    "status": "installed",
+    "installed_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 搜索项目资源
+
+<ParamField path="/project/:projectId/search" method="GET">
+搜索项目中的页面或部署。
+
+### 请求参数
+
+| 参数名     | 类型    | 必选 | 说明                |
+|------------|---------|------|-------------------|
+| projectId  | string  | 是   | 项目ID            |
+| type       | string  | 是   | 搜索类型：page/deployment |
+| fromBid    | string  | 否   | 起始块ID          |
+| nextVersion| boolean | 否   | 是否获取下一个版本  |
+
+<CodeGroup>
+```http 请求示例
+GET /project/project_123/search?type=page
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "block_123",
+        "name": "对话模块",
+        "type": "page",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ]
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取回收站列表
+
+<ParamField path="/project/:projectId/trash" method="GET">
+获取项目回收站中的块列表。
+
+### 请求参数
+
+| 参数名    | 类型   | 必选 | 说明     |
+|-----------|--------|------|----------|
+| projectId | string | 是   | 项目ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /project/project_123/trash
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "block_125",
+        "name": "已删除的模块",
+        "deleted_at": "2024-01-20T12:00:00Z"
+      }
+    ]
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取块版本历史
+
+<ParamField path="/project/:pid/versions/:bid" method="GET">
+获取指定块的版本历史。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| pid    | string | 是   | 项目ID   |
+| bid    | string | 是   | 块ID     |
+
+<CodeGroup>
+```http 请求示例
+GET /project/project_123/versions/block_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "versions": [
+      {
+        "version": "1.0.0",
+        "created_at": "2024-01-20T12:00:00Z",
+        "description": "初始版本"
+      }
+    ]
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 恢复块
+
+<ParamField path="/project/:pid/restore/:bid" method="POST">
+从回收站恢复指定的块。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| pid    | string | 是   | 项目ID   |
+| bid    | string | 是   | 块ID     |
+
+<CodeGroup>
+```http 请求示例
+POST /project/project_123/restore/block_125
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "block_125",
+    "name": "已恢复的模块",
+    "restored_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 清空回收站
+
+<ParamField path="/project/restore-trash" method="POST">
+清空项目的回收站。
+
+<CodeGroup>
+```http 请求示例
+POST /project/restore-trash
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "cleared_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足                 |
+| 404    | 项目或资源不存在         |
+| 409    | 项目名称已存在           |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>
