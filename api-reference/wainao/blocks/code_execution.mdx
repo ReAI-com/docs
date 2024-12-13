@@ -1,0 +1,140 @@
+---
+title: "代码执行 Block"
+description: "代码执行 block 用于执行 JavaScript 代码，支持自定义处理逻辑和错误处理。"
+---
+
+# 代码执行 Block
+
+代码执行 block 允许在工作流中执行 JavaScript 代码。它可以处理数据、执行计算、调用函数，并将结果传递给其他 block。这个 block 特别适合需要自定义处理逻辑的场景。
+
+## 配置选项
+
+```typescript
+{
+  // 是否将代码包含在提示中
+  includeInPrompt: false,
+
+  // 是否在出错时继续执行
+  continueOnError: false,
+
+  // 代码内容
+  code: "",
+
+  // 代码类型，默认为 javascript
+  type: "javascript"
+}
+```
+
+### 参数说明
+
+1. **includeInPrompt**
+   - 类型：boolean
+   - 默认值：false
+   - 作用：决定是否将代码内容包含在提示中
+   - 说明：当需要 AI 理解代码逻辑时可以设置为 true
+
+2. **continueOnError**
+   - 类型：boolean
+   - 默认值：false
+   - 作用：控制代码执行出错时的行为
+   - 说明：设置为 true 时，即使代码执行出错也会继续工作流
+
+3. **code**
+   - 类型：string
+   - 默认值：空字符串
+   - 作用：存储要执行的 JavaScript 代码
+   - 说明：支持完整的 JavaScript 语法
+
+4. **type**
+   - 类型：string
+   - 默认值：javascript
+   - 作用：指定代码的类型
+   - 说明：目前仅支持 JavaScript
+
+## 代码执行环境
+
+### 可用功能
+1. **标准 JavaScript API**
+   - 数学运算
+   - 字符串处理
+   - 数组操作
+   - 对象处理
+   - 日期时间处理
+
+2. **上下文变量**
+   - 可以访问工作流中的变量
+   - 可以定义新的变量供后续使用
+
+### 限制
+1. **安全限制**
+   - 不能访问文件系统
+   - 不能发起网络请求
+   - 不能使用某些危险的 API
+
+2. **执行限制**
+   - 代码执行时间有限制
+   - 内存使用有限制
+
+## 使用示例
+
+1. **基础数据处理**
+```json
+{
+  "type": "code_execution",
+  "options": {
+    "includeInPrompt": false,
+    "continueOnError": false,
+    "code": "const numbers = [1, 2, 3, 4, 5];\nconst sum = numbers.reduce((a, b) => a + b, 0);\nreturn sum;",
+    "type": "javascript"
+  }
+}
+```
+
+2. **错误处理**
+```json
+{
+  "type": "code_execution",
+  "options": {
+    "includeInPrompt": false,
+    "continueOnError": true,
+    "code": "try {\n  // 可能出错的代码\n  const result = someOperation();\n  return result;\n} catch (error) {\n  return { error: error.message };\n}",
+    "type": "javascript"
+  }
+}
+```
+
+3. **与其他 Block 交互**
+```json
+{
+  "type": "code_execution",
+  "options": {
+    "includeInPrompt": true,
+    "continueOnError": false,
+    "code": "// 处理上一个 block 的输出\nconst input = context.previousOutput;\nconst processed = input.map(item => item.toUpperCase());\nreturn processed;",
+    "type": "javascript"
+  }
+}
+```
+
+## 注意事项
+
+1. **代码安全**
+   - 仔细检查代码逻辑，避免无限循环
+   - 注意内存使用，避免大量数据处理
+   - 使用 try-catch 处理可能的错误
+
+2. **性能优化**
+   - 避免复杂的递归操作
+   - 优化循环和数据处理逻辑
+   - 合理使用内存
+
+3. **调试技巧**
+   - 使用 console.log 输出调试信息
+   - 设置 continueOnError 为 true 进行测试
+   - 分步骤验证代码逻辑
+
+4. **与其他 Block 配合**
+   - 可以处理 generation block 的输出
+   - 可以为 structured_generation block 准备数据
+   - 可以在 loop block 中使用
+   - 可以与 ifElse block 配合进行条件处理

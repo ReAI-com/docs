@@ -1,0 +1,241 @@
+---
+title: "传感器数据 Block"
+description: "传感器数据 block 用于处理和分析各类传感器数据，支持多种数据格式和处理方式。"
+---
+
+# 传感器数据 Block
+
+传感器数据 block 专门用于处理来自各种传感器的数据。它支持多种传感器类型，可以处理不同格式的数据，并提供数据分析和转换功能。
+
+## 配置选项
+
+```typescript
+{
+  // 传感器类型
+  sensorType: "temperature",
+
+  // 数据格式
+  dataFormat: "json",
+
+  // 数据处理方式
+  processType: "raw",
+
+  // 数据采样配置
+  sampling: {
+    // 采样率（Hz）
+    rate: 1,
+    // 采样时长（秒）
+    duration: 60
+  },
+
+  // 数据过滤设置
+  filter: {
+    // 是否启用过滤
+    enabled: false,
+    // 过滤阈值
+    threshold: 0
+  }
+}
+```
+
+### 参数说明
+
+1. **sensorType**
+   - 类型：string
+   - 可选值：
+     - temperature：温度传感器
+     - humidity：湿度传感器
+     - pressure：压力传感器
+     - acceleration：加速度传感器
+     - gyroscope：陀螺仪
+     - magnetometer：磁力计
+   - 默认值：temperature
+   - 作用：指定传感器类型
+
+2. **dataFormat**
+   - 类型：string
+   - 可选值：json、csv、binary
+   - 默认值：json
+   - 作用：指定数据格式
+
+3. **processType**
+   - 类型：string
+   - 可选值：raw、averaged、filtered
+   - 默认值：raw
+   - 作用：指定数据处理方式
+
+4. **sampling**
+   - 类型：object
+   - 作用：配置数据采样参数
+   - 属性：
+     - rate：采样频率
+     - duration：采样时长
+
+5. **filter**
+   - 类型：object
+   - 作用：配置数据过滤参数
+   - 属性：
+     - enabled：是否启用过滤
+     - threshold：过滤阈值
+
+## 传感器数据格式
+
+### 温度传感器
+```json
+{
+  "type": "temperature",
+  "data": {
+    "value": 25.6,    // 温度值（摄氏度）
+    "timestamp": 1234567890,
+    "unit": "celsius"
+  }
+}
+```
+
+### 湿度传感器
+```json
+{
+  "type": "humidity",
+  "data": {
+    "value": 45.5,    // 湿度值（百分比）
+    "timestamp": 1234567890,
+    "unit": "percentage"
+  }
+}
+```
+
+### 压力传感器
+```json
+{
+  "type": "pressure",
+  "data": {
+    "value": 101.325, // 压力值（千帕）
+    "timestamp": 1234567890,
+    "unit": "kPa"
+  }
+}
+```
+
+### 加速度传感器
+```json
+{
+  "type": "acceleration",
+  "data": {
+    "x": 0.1,        // X轴加速度（m/s²）
+    "y": -0.2,       // Y轴加速度（m/s²）
+    "z": 9.8,        // Z轴加速度（m/s²）
+    "timestamp": 1234567890,
+    "unit": "m/s2"
+  }
+}
+```
+
+### 陀螺仪
+```json
+{
+  "type": "gyroscope",
+  "data": {
+    "x": 1.2,        // X轴角速度（度/秒）
+    "y": -0.5,       // Y轴角速度（度/秒）
+    "z": 0.8,        // Z轴角速度（度/秒）
+    "timestamp": 1234567890,
+    "unit": "deg/s"
+  }
+}
+```
+
+### 磁力计
+```json
+{
+  "type": "magnetometer",
+  "data": {
+    "x": 25.4,       // X轴磁场强度（微特斯拉）
+    "y": -12.6,      // Y轴磁场强度（微特斯拉）
+    "z": 40.2,       // Z轴磁场强度（微特斯拉）
+    "timestamp": 1234567890,
+    "unit": "uT"
+  }
+}
+```
+
+## 使用示例
+
+1. **基础温度传感器配置**
+```json
+{
+  "type": "dyj",
+  "options": {
+    "sensorType": "temperature",
+    "dataFormat": "json",
+    "processType": "raw",
+    "sampling": {
+      "rate": 1,
+      "duration": 60
+    }
+  }
+}
+```
+
+2. **带过滤的加速度传感器**
+```json
+{
+  "type": "dyj",
+  "options": {
+    "sensorType": "acceleration",
+    "dataFormat": "json",
+    "processType": "filtered",
+    "sampling": {
+      "rate": 100,
+      "duration": 10
+    },
+    "filter": {
+      "enabled": true,
+      "threshold": 0.1
+    }
+  }
+}
+```
+
+3. **多传感器数据采集**
+```json
+{
+  "type": "dyj",
+  "options": {
+    "sensorType": ["temperature", "humidity"],
+    "dataFormat": "json",
+    "processType": "averaged",
+    "sampling": {
+      "rate": 5,
+      "duration": 300
+    }
+  }
+}
+```
+
+## 注意事项
+
+1. **数据采集**
+   - 根据需求选择合适的采样率
+   - 注意采样时长对内存的影响
+   - 考虑数据存储空间
+
+2. **数据格式**
+   - 确保数据格式正确
+   - 注意时间戳的同步
+   - 处理单位转换
+
+3. **数据处理**
+   - 选择合适的处理方式
+   - 注意数据过滤的影响
+   - 处理异常数据
+
+4. **性能优化**
+   - 控制采样率和采样时长
+   - 合理使用数据过滤
+   - 优化数据存储方式
+
+5. **与其他 Block 配合**
+   - 可以将传感器数据传递给 AI 模型
+   - 可以在循环中持续采集数据
+   - 可以根据数据触发条件判断
+   - 可以生成数据分析报告

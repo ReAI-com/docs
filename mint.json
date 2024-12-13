@@ -107,6 +107,22 @@
       "pages": [
         "api-reference/wainao/block/introduction",
         "api-reference/wainao/project/introduction"
+        ]
+    },
+    {
+      "group": "Block 类型",
+      "pages": [
+        "api-reference/wainao/blocks/introduction",
+        "api-reference/wainao/blocks/generation",
+        "api-reference/wainao/blocks/structured_generation",
+        "api-reference/wainao/blocks/code_execution",
+        "api-reference/wainao/blocks/flow",
+        "api-reference/wainao/blocks/input",
+        "api-reference/wainao/blocks/loop",
+        "api-reference/wainao/blocks/ask",
+        "api-reference/wainao/blocks/text",
+        "api-reference/wainao/blocks/ifElse",
+        "api-reference/wainao/blocks/dyj"
       ]
     }
   ],
