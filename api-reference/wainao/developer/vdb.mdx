@@ -1,0 +1,289 @@
+---
+title: '向量数据库'
+description: '开发者向量数据库接口，提供向量数据的管理和搜索功能'
+---
+
+# 向量数据库
+
+<Note>
+  向量数据库接口用于管理和搜索向量数据。所有接口都需要开发者权限。
+</Note>
+
+## 获取向量数据列表
+
+<ParamField path="/dev/vdb/list" method="GET">
+获取向量数据列表。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明         |
+|----------|---------|------|--------------|
+| page     | integer | 否   | 页码，默认1  |
+| size     | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/vdb/list?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "vdb_123",
+        "name": "知识库",
+        "type": "text",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取向量数据详情
+
+<ParamField path="/dev/vdb/:id" method="GET">
+获取指定向量数据的详细信息。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明         |
+|--------|--------|------|--------------|
+| id     | string | 是   | 向量数据ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/vdb/vdb_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "vdb_123",
+    "name": "知识库",
+    "description": "文本知识库",
+    "type": "text",
+    "config": {
+      "dimension": 1536,
+      "metric": "cosine"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 创建向量数据
+
+<ParamField path="/dev/vdb" method="POST">
+创建新的向量数据。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| name        | string | 是   | 向量数据名称 |
+| description | string | 否   | 向量数据描述 |
+| type        | string | 是   | 向量数据类型 |
+| config      | object | 否   | 向量数据配置 |
+
+<CodeGroup>
+```http 请求示例
+POST /dev/vdb
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "新知识库",
+  "description": "这是一个新知识库",
+  "type": "text",
+  "config": {
+    "dimension": 1536,
+    "metric": "cosine"
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "vdb_124",
+    "name": "新知识库",
+    "description": "这是一个新知识库",
+    "type": "text",
+    "config": {
+      "dimension": 1536,
+      "metric": "cosine"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新向量数据
+
+<ParamField path="/dev/vdb/:id" method="PUT">
+更新指定向量数据的信息。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| id          | string | 是   | 向量数据ID   |
+| name        | string | 否   | 向量数据名称 |
+| description | string | 否   | 向量数据描述 |
+| config      | object | 否   | 向量数据配置 |
+
+<CodeGroup>
+```http 请求示例
+PUT /dev/vdb/vdb_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "更新后的知识库",
+  "description": "这是更新后的知识库描述"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "vdb_124",
+    "name": "更新后的知识库",
+    "description": "这是更新后的知识库描述",
+    "type": "text",
+    "config": {
+      "dimension": 1536,
+      "metric": "cosine"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 删除向量数据
+
+<ParamField path="/dev/vdb/:id" method="DELETE">
+删除指定的向量数据。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明         |
+|--------|--------|------|--------------|
+| id     | string | 是   | 向量数据ID   |
+
+<CodeGroup>
+```http 请求示例
+DELETE /dev/vdb/vdb_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": null,
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 向量数据搜索
+
+<ParamField path="/dev/vdb/:id/search" method="POST">
+在指定的向量数据中执行相似度搜索。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明           |
+|----------|---------|------|----------------|
+| id       | string  | 是   | 向量数据ID     |
+| query    | string  | 是   | 搜索查询文本   |
+| limit    | integer | 否   | 返回结果数量   |
+| threshold| float   | 否   | 相似度阈值     |
+
+<CodeGroup>
+```http 请求示例
+POST /dev/vdb/vdb_123/search
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "query": "如何使用API",
+  "limit": 5,
+  "threshold": 0.8
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "results": [
+      {
+        "id": "doc_1",
+        "content": "API使用指南",
+        "score": 0.95,
+        "metadata": {
+          "type": "document",
+          "tags": ["api", "guide"]
+        }
+      },
+      {
+        "id": "doc_2",
+        "content": "API接口说明",
+        "score": 0.85,
+        "metadata": {
+          "type": "document",
+          "tags": ["api", "reference"]
+        }
+      }
+    ],
+    "total": 2
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足（需要开发者权限）|
+| 404    | 向量数据不存在           |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>

@@ -1,0 +1,228 @@
+---
+title: '对话管理'
+description: '开发者对话管理接口，提供对话的增删改查功能'
+---
+
+# 对话管理
+
+<Note>
+  对话管理接口用于创建和管理对话。所有接口都需要开发者权限。
+</Note>
+
+## 获取对话列表
+
+<ParamField path="/dev/conv/list" method="GET">
+获取对话列表。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明         |
+|----------|---------|------|--------------|
+| page     | integer | 否   | 页码，默认1  |
+| size     | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/conv/list?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "conv_123",
+        "title": "客户咨询",
+        "status": "active",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取对话详情
+
+<ParamField path="/dev/conv/:id" method="GET">
+获取指定对话的详细信息。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 对话ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/conv/conv_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "conv_123",
+    "title": "客户咨询",
+    "description": "产品功能咨询",
+    "status": "active",
+    "config": {
+      "type": "customer_service",
+      "model": "gpt-4"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 创建对话
+
+<ParamField path="/dev/conv" method="POST">
+创建新的对话。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| title       | string | 是   | 对话标题     |
+| description | string | 否   | 对话描述     |
+| config      | object | 否   | 对话配置     |
+
+<CodeGroup>
+```http 请求示例
+POST /dev/conv
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "title": "新对话",
+  "description": "这是一个新对话",
+  "config": {
+    "type": "customer_service",
+    "model": "gpt-4"
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "conv_124",
+    "title": "新对话",
+    "description": "这是一个新对话",
+    "status": "active",
+    "config": {
+      "type": "customer_service",
+      "model": "gpt-4"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新对话
+
+<ParamField path="/dev/conv/:id" method="PUT">
+更新指定对话的信息。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| id          | string | 是   | 对话ID       |
+| title       | string | 否   | 对话标题     |
+| description | string | 否   | 对话描述     |
+| config      | object | 否   | 对话配置     |
+
+<CodeGroup>
+```http 请求示例
+PUT /dev/conv/conv_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "title": "更新后的对话",
+  "description": "这是更新后的对话描述"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "conv_124",
+    "title": "更新后的对话",
+    "description": "这是更新后的对话描述",
+    "status": "active",
+    "config": {
+      "type": "customer_service",
+      "model": "gpt-4"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 删除对话
+
+<ParamField path="/dev/conv/:id" method="DELETE">
+删除指定的对话。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 对话ID   |
+
+<CodeGroup>
+```http 请求示例
+DELETE /dev/conv/conv_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": null,
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足（需要开发者权限）|
+| 404    | 对话不存在               |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>

@@ -1,0 +1,231 @@
+---
+title: '任务管理'
+description: '开发者任务管理接口，提供后台任务的增删改查功能'
+---
+
+# 任务管理
+
+<Note>
+  任务管理接口用于创建和管理后台任务。所有接口都需要开发者权限。
+</Note>
+
+## 获取任务列表
+
+<ParamField path="/dev/task/list" method="GET">
+获取任务列表。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明         |
+|----------|---------|------|--------------|
+| page     | integer | 否   | 页码，默认1  |
+| size     | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/task/list?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "task_123",
+        "name": "数据处理任务",
+        "status": "running",
+        "created_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取任务详情
+
+<ParamField path="/dev/task/:id" method="GET">
+获取指定任务的详细信息。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 任务ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/task/task_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "task_123",
+    "name": "数据处理任务",
+    "description": "处理用户上传的数据",
+    "status": "running",
+    "progress": 45,
+    "config": {
+      "type": "data_processing",
+      "priority": "high"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 创建任务
+
+<ParamField path="/dev/task" method="POST">
+创建新的任务。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| name        | string | 是   | 任务名称     |
+| description | string | 否   | 任务描述     |
+| config      | object | 否   | 任务配置     |
+
+<CodeGroup>
+```http 请求示例
+POST /dev/task
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "新任务",
+  "description": "这是一个新任务",
+  "config": {
+    "type": "data_processing",
+    "priority": "high"
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "task_124",
+    "name": "新任务",
+    "description": "这是一个新任务",
+    "status": "pending",
+    "progress": 0,
+    "config": {
+      "type": "data_processing",
+      "priority": "high"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新任务
+
+<ParamField path="/dev/task/:id" method="PUT">
+更新指定任务的信息。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| id          | string | 是   | 任务ID       |
+| name        | string | 否   | 任务名称     |
+| description | string | 否   | 任务描述     |
+| config      | object | 否   | 任务配置     |
+
+<CodeGroup>
+```http 请求示例
+PUT /dev/task/task_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "更新后的任务",
+  "description": "这是更新后的任务描述"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "task_124",
+    "name": "更新后的任务",
+    "description": "这是更新后的任务描述",
+    "status": "pending",
+    "progress": 0,
+    "config": {
+      "type": "data_processing",
+      "priority": "high"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 删除任务
+
+<ParamField path="/dev/task/:id" method="DELETE">
+删除指定的任务。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 任务ID   |
+
+<CodeGroup>
+```http 请求示例
+DELETE /dev/task/task_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": null,
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足（需要开发者权限）|
+| 404    | 任务不存在               |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>

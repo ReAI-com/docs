@@ -1,0 +1,226 @@
+---
+title: '应用管理'
+description: '开发者应用管理接口，提供应用的增删改查功能'
+---
+
+# 应用管理
+
+<Note>
+  应用管理接口用于创建和管理外脑应用。所有接口都需要开发者权限。
+</Note>
+
+## 获取应用列表
+
+<ParamField path="/dev/app/list" method="GET">
+获取应用列表。
+
+### 请求参数
+
+| 参数名   | 类型    | 必选 | 说明         |
+|----------|---------|------|--------------|
+| page     | integer | 否   | 页码，默认1  |
+| size     | integer | 否   | 每页数量     |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/app/list?page=1&size=10
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "app_123",
+        "name": "测试应用",
+        "description": "这是一个测试应用",
+        "created_at": "2024-01-20T12:00:00Z",
+        "updated_at": "2024-01-20T12:00:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 10
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 获取应用详情
+
+<ParamField path="/dev/app/:id" method="GET">
+获取指定应用的详细信息。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 应用ID   |
+
+<CodeGroup>
+```http 请求示例
+GET /dev/app/app_123
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "app_123",
+    "name": "测试应用",
+    "description": "这是一个测试应用",
+    "config": {
+      "type": "chat",
+      "model": "gpt-4"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 创建应用
+
+<ParamField path="/dev/app" method="POST">
+创建新的应用。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| name        | string | 是   | 应用名称     |
+| description | string | 否   | 应用描述     |
+| config      | object | 否   | 应用配置     |
+
+<CodeGroup>
+```http 请求示例
+POST /dev/app
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "新应用",
+  "description": "这是一个新应用",
+  "config": {
+    "type": "chat",
+    "model": "gpt-4"
+  }
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "app_124",
+    "name": "新应用",
+    "description": "这是一个新应用",
+    "config": {
+      "type": "chat",
+      "model": "gpt-4"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:00:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 更新应用
+
+<ParamField path="/dev/app/:id" method="PUT">
+更新指定应用的信息。
+
+### 请求参数
+
+| 参数名      | 类型   | 必选 | 说明         |
+|-------------|--------|------|--------------|
+| id          | string | 是   | 应用ID       |
+| name        | string | 否   | 应用名称     |
+| description | string | 否   | 应用描述     |
+| config      | object | 否   | 应用配置     |
+
+<CodeGroup>
+```http 请求示例
+PUT /dev/app/app_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "更新后的应用",
+  "description": "这是更新后的应用描述"
+}
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": {
+    "id": "app_124",
+    "name": "更新后的应用",
+    "description": "这是更新后的应用描述",
+    "config": {
+      "type": "chat",
+      "model": "gpt-4"
+    },
+    "created_at": "2024-01-20T12:00:00Z",
+    "updated_at": "2024-01-20T12:01:00Z"
+  },
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 删除应用
+
+<ParamField path="/dev/app/:id" method="DELETE">
+删除指定的应用。
+
+### 请求参数
+
+| 参数名 | 类型   | 必选 | 说明     |
+|--------|--------|------|----------|
+| id     | string | 是   | 应用ID   |
+
+<CodeGroup>
+```http 请求示例
+DELETE /dev/app/app_124
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+```json 成功响应
+{
+  "code": 200,
+  "data": null,
+  "message": "success"
+}
+```
+</CodeGroup>
+</ParamField>
+
+## 错误码说明
+
+<Card title="错误码说明" icon="triangle-exclamation">
+| 错误码 | 说明                     |
+|--------|--------------------------|
+| 400    | 请求参数错误             |
+| 401    | 未授权或令牌无效         |
+| 403    | 权限不足（需要开发者权限）|
+| 404    | 应用不存在               |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器错误               |
+</Card>
