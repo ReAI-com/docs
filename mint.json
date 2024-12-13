@@ -77,6 +77,37 @@
         "api-reference/wainao/tools/home",
         "api-reference/wainao/tools/wainao"
       ]
+    },
+    {
+      "group": "开发者服务",
+      "pages": [
+        "api-reference/wainao/developer/introduction",
+        "api-reference/wainao/developer/app",
+        "api-reference/wainao/developer/tool",
+        "api-reference/wainao/developer/model",
+        "api-reference/wainao/developer/task",
+        "api-reference/wainao/developer/conv",
+        "api-reference/wainao/developer/bot",
+        "api-reference/wainao/developer/hardware",
+        "api-reference/wainao/developer/vdb"
+      ]
+    },
+    {
+      "group": "管理员服务",
+      "pages": [
+        "api-reference/wainao/admin/introduction",
+        "api-reference/wainao/admin/hardware",
+        "api-reference/wainao/admin/user",
+        "api-reference/wainao/admin/order",
+        "api-reference/wainao/admin/coupon"
+      ]
+    },
+    {
+      "group": "应用服务",
+      "pages": [
+        "api-reference/wainao/block/introduction",
+        "api-reference/wainao/project/introduction"
+      ]
     }
   ],
   "footerSocials": {
