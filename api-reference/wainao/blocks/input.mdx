@@ -1,0 +1,169 @@
+---
+title: "输入 Block"
+description: "输入 block 用于接收用户输入，支持多种数据类型和输入验证。"
+---
+
+# 输入 Block
+
+输入 block 用于在工作流中接收用户输入。它支持多种数据类型，可以设置输入验证规则，并且可以为输入提供默认值和说明文本。
+
+## 配置选项
+
+```typescript
+{
+  // 输入类型，支持 text、number 等
+  type: "text",
+
+  // 输入说明
+  description: "",
+
+  // 默认值
+  defaultValue: "",
+
+  // 是否必填
+  required: true,
+
+  // 验证规则
+  validation: {
+    // 最小长度（文本类型）或最小值（数字类型）
+    min: null,
+    // 最大长度（文本类型）或最大值（数字类型）
+    max: null,
+    // 正则表达式（仅文本类型）
+    pattern: null
+  }
+}
+```
+
+### 参数说明
+
+1. **type**
+   - 类型：string
+   - 默认值：text
+   - 可选值：
+     - text：文本输入
+     - number：数字输入
+     - password：密码输入
+     - email：邮箱输入
+   - 说明：决定输入框的类型和验证规则
+
+2. **description**
+   - 类型：string
+   - 默认值：空字符串
+   - 作用：为用户提供输入说明
+   - 说明：支持多语言配置
+
+3. **defaultValue**
+   - 类型：string | number
+   - 默认值：空字符串
+   - 作用：设置输入框的默认值
+   - 说明：类型需要与 type 参数匹配
+
+4. **required**
+   - 类型：boolean
+   - 默认值：true
+   - 作用：控制输入是否必填
+   - 说明：设为 false 时允许空值
+
+5. **validation**
+   - 类型：object
+   - 作用：设置输入验证规则
+   - 属性：
+     - min：最小值/长度限制
+     - max：最大值/长度限制
+     - pattern：正则表达式匹配（仅文本类型）
+
+## 输入类型说明
+
+### 文本输入 (text)
+- 用于接收普通文本
+- 支持长度限制和正则匹配
+- 适用于名称、描述等
+
+### 数字输入 (number)
+- 仅接收数字值
+- 支持最小值和最大值限制
+- 适用于年龄、数量等
+
+### 密码输入 (password)
+- 输入内容会被遮掩
+- 适用于密码、密钥等敏感信息
+
+### 邮箱输入 (email)
+- 自带邮箱格式验证
+- 适用于用户邮箱地址
+
+## 使用示例
+
+1. **基础文本输入**
+```json
+{
+  "type": "input",
+  "options": {
+    "type": "text",
+    "description": "请输入用户名",
+    "defaultValue": "",
+    "required": true,
+    "validation": {
+      "min": 3,
+      "max": 20
+    }
+  }
+}
+```
+
+2. **数字输入带验证**
+```json
+{
+  "type": "input",
+  "options": {
+    "type": "number",
+    "description": "请输入年龄（18-100岁）",
+    "defaultValue": 18,
+    "required": true,
+    "validation": {
+      "min": 18,
+      "max": 100
+    }
+  }
+}
+```
+
+3. **带正则验证的文本输入**
+```json
+{
+  "type": "input",
+  "options": {
+    "type": "text",
+    "description": "请输入手机号码",
+    "defaultValue": "",
+    "required": true,
+    "validation": {
+      "pattern": "^1[3-9]\\d{9}$"
+    }
+  }
+}
+```
+
+## 注意事项
+
+1. **输入验证**
+   - 根据实际需求设置合适的验证规则
+   - 注意正则表达式的性能影响
+   - 考虑输入值的边界情况
+
+2. **默认值设置**
+   - 默认值要符合验证规则
+   - 对于必填字段，建议提供默认值
+   - 默认值类型要与输入类型匹配
+
+3. **错误处理**
+   - 为用户提供清晰的错误提示
+   - 考虑输入验证失败的处理方式
+   - 注意特殊字符的处理
+
+4. **与其他 Block 配合**
+   - 可以作为 generation block 的输入源
+   - 可以在 loop block 中重复使用
+   - 可以与 ifElse block 配合进行条件判断
+   - 输入值可以传递给其他 block 使用

@@ -1,0 +1,182 @@
+---
+title: "AI结构化生成 Block"
+description: "AI结构化生成 block 用于生成符合特定数据结构的内容，支持自定义输出格式和数据类型。"
+---
+
+# AI结构化生成 Block
+
+AI结构化生成 block 是一个专门用于生成结构化数据的 block 类型。它可以根据预定义的数据结构模板，生成符合特定格式的内容，非常适合需要固定数据结构的场景。
+
+## 配置选项
+
+```typescript
+{
+  // 创造力参数，范围 0-100，默认值 50
+  creativity: 50,
+
+  // AI 模型选择，默认使用 gpt-4o-mini
+  model: "gpt-4o-mini",
+
+  // 输出数据结构定义
+  formatData: {
+    id: "root",
+    name: "ROOT",
+    isRoot: true,
+    type: "object",
+    children: []
+  }
+}
+```
+
+### 参数说明
+
+1. **creativity**
+   - 范围：0-100
+   - 默认值：50
+   - 作用：控制生成内容的创造性和多样性
+   - 说明：对于结构化数据，默认值较低以确保生成的内容更加规范
+
+2. **model**
+   - 默认值：gpt-4o-mini
+   - 作用：选择用于生成内容的 AI 模型
+   - 说明：建议使用支持结构化输出的模型
+
+3. **formatData**
+   - 类型：对象
+   - 作用：定义输出数据的结构
+   - 属性：
+     - `id`: 节点唯一标识
+     - `name`: 节点名称
+     - `type`: 数据类型（object、array、string、number、boolean）
+     - `children`: 子节点数组
+     - `isRoot`: 是否为根节点
+
+## 数据结构定义
+
+### 支持的数据类型
+1. **object**：对象类型，可包含多个子字段
+2. **array**：数组类型，可包含多个相同类型的元素
+3. **string**：字符串类型
+4. **number**：数字类型
+5. **boolean**：布尔类型
+
+### 结构示例
+```json
+{
+  "id": "person",
+  "name": "个人信息",
+  "type": "object",
+  "children": [
+    {
+      "id": "name",
+      "name": "姓名",
+      "type": "string"
+    },
+    {
+      "id": "age",
+      "name": "年龄",
+      "type": "number"
+    },
+    {
+      "id": "hobbies",
+      "name": "爱好",
+      "type": "array",
+      "children": [
+        {
+          "id": "hobby",
+          "name": "爱好",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## 与 AI 模型交互
+
+1. **输入处理**
+   - AI 模型会根据数据结构定义生成相应格式的内容
+   - 可以通过提示语引导生成特定内容
+
+2. **输出格式化**
+   - 生成的内容会严格按照定义的结构进行格式化
+   - 自动处理数据类型转换
+   - 确保输出符合预定义的结构
+
+3. **错误处理**
+   - 当生成的内容不符合结构要求时会自动进行修正
+   - 对于必需字段会确保生成有效值
+
+## 使用示例
+
+1. **基础使用**
+```json
+{
+  "type": "structured_generation",
+  "options": {
+    "creativity": 50,
+    "model": "gpt-4o-mini",
+    "formatData": {
+      "id": "root",
+      "name": "ROOT",
+      "type": "object",
+      "children": []
+    }
+  }
+}
+```
+
+2. **生成用户信息**
+```json
+{
+  "type": "structured_generation",
+  "options": {
+    "creativity": 60,
+    "model": "gpt-4o-mini",
+    "formatData": {
+      "id": "user",
+      "name": "用户信息",
+      "type": "object",
+      "children": [
+        {
+          "id": "username",
+          "name": "用户名",
+          "type": "string"
+        },
+        {
+          "id": "age",
+          "name": "年龄",
+          "type": "number"
+        },
+        {
+          "id": "isActive",
+          "name": "是否活跃",
+          "type": "boolean"
+        }
+      ]
+    }
+  }
+}
+```
+
+## 注意事项
+
+1. **数据结构设计**
+   - 合理设计数据结构，避免过于复杂的嵌套
+   - 为字段提供清晰的命名和描述
+   - 考虑数据类型的合理性
+
+2. **性能优化**
+   - 复杂的数据结构可能增加生成时间
+   - 建议将大型结构拆分为多个小型结构
+
+3. **与其他 Block 配合**
+   - 可以与 generation block 配合使用
+   - 可以作为 loop block 的数据源
+   - 输出可以传递给 code_execution block 进行处理
+
+4. **错误处理**
+   - 添加数据验证逻辑
+   - 处理可能的类型转换错误
+   - 为可选字段设置默认值

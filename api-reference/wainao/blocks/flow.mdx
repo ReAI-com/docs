@@ -1,0 +1,150 @@
+---
+title: "流程引用 Block"
+description: "流程引用 block 用于引用其他工作流的输入和输出，实现工作流的模块化和复用。"
+---
+
+# 流程引用 Block
+
+流程引用 block 允许在当前工作流中引用其他已定义的工作流。通过这种方式，可以实现工作流的模块化设计，提高代码复用率，并使复杂的工作流更容易管理和维护。
+
+## 配置选项
+
+```typescript
+{
+  // 引用的工作流 ID
+  flowId: "",
+
+  // 是否使用缓存结果
+  useCache: false,
+
+  // 输入映射配置
+  inputMapping: {},
+
+  // 输出映射配置
+  outputMapping: {}
+}
+```
+
+### 参数说明
+
+1. **flowId**
+   - 类型：string
+   - 默认值：空字符串
+   - 作用：指定要引用的工作流 ID
+   - 说明：必须是系统中已存在的工作流 ID
+
+2. **useCache**
+   - 类型：boolean
+   - 默认值：false
+   - 作用：控制是否使用缓存的执行结果
+   - 说明：启用缓存可以提高性能，但可能不会反映最新的执行结果
+
+3. **inputMapping**
+   - 类型：object
+   - 默认值：空对象
+   - 作用：配置输入参数的映射关系
+   - 说明：定义当前工作流变量如何传递给被引用的工作流
+
+4. **outputMapping**
+   - 类型：object
+   - 默认值：空对象
+   - 作用：配置输出结果的映射关系
+   - 说明：定义被引用工作流的输出如何映射到当前工作流
+
+## 输入输出映射
+
+### 输入映射
+```json
+{
+  "targetInput1": "sourceVariable1",
+  "targetInput2": "sourceVariable2"
+}
+```
+- `targetInput`: 被引用工作流中的输入参数名
+- `sourceVariable`: 当前工作流中的变量名
+
+### 输出映射
+```json
+{
+  "targetVariable1": "sourceOutput1",
+  "targetVariable2": "sourceOutput2"
+}
+```
+- `targetVariable`: 当前工作流中的变量名
+- `sourceOutput`: 被引用工作流中的输出名
+
+## 使用示例
+
+1. **基础引用**
+```json
+{
+  "type": "flow",
+  "options": {
+    "flowId": "example-flow-123",
+    "useCache": false,
+    "inputMapping": {},
+    "outputMapping": {}
+  }
+}
+```
+
+2. **带输入映射**
+```json
+{
+  "type": "flow",
+  "options": {
+    "flowId": "text-processing-flow",
+    "useCache": false,
+    "inputMapping": {
+      "text": "currentText",
+      "language": "targetLanguage"
+    },
+    "outputMapping": {}
+  }
+}
+```
+
+3. **带输出映射**
+```json
+{
+  "type": "flow",
+  "options": {
+    "flowId": "data-analysis-flow",
+    "useCache": true,
+    "inputMapping": {
+      "dataset": "inputData"
+    },
+    "outputMapping": {
+      "analyzedResult": "analysis",
+      "summary": "resultSummary"
+    }
+  }
+}
+```
+
+## 注意事项
+
+1. **工作流依赖**
+   - 确保引用的工作流 ID 存在且有效
+   - 避免循环引用
+   - 注意工作流版本的兼容性
+
+2. **输入输出映射**
+   - 确保映射的变量名称正确
+   - 注意数据类型的匹配
+   - 处理可能的空值或未定义情况
+
+3. **缓存使用**
+   - 合理使用缓存功能
+   - 注意缓存可能导致的数据不一致
+   - 对时效性要求高的场景建议禁用缓存
+
+4. **性能考虑**
+   - 避免过深的工作流嵌套
+   - 合理使用缓存提高性能
+   - 注意内存使用情况
+
+5. **与其他 Block 配合**
+   - 可以在 loop block 中引用其他工作流
+   - 可以与 ifElse block 配合实现条件工作流
+   - 可以组合多个工作流实现复杂功能
