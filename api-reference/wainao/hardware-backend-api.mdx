@@ -1,0 +1,127 @@
+---
+title: '硬件后端 API'
+description: '硬件设备认证和日志接口文档'
+---
+
+# 硬件后端 API
+
+## 认证接口
+
+### 获取访问令牌
+
+<ParamField path="/api/auth/access" method="POST">
+  获取设备访问令牌的接口。
+
+  **请求参数**
+
+  <Param body="code" type="string" required>
+    设备验证码
+  </Param>
+
+  <Param body="hdId" type="string" required>
+    硬件设备ID
+  </Param>
+
+  **响应格式**
+  ```json
+  {
+    "code": 200,
+    "data": {
+      "accessToken": "string",
+      "expiresIn": 3600,
+      "refreshToken": "string"
+    }
+  }
+  ```
+
+  **响应状态码**
+  - `200`: 成功
+  - `501`: 验证失败
+
+  **示例请求**
+  ```bash
+  curl -X POST http://your-api-domain/api/auth/access \
+    -H "Content-Type: application/json" \
+    -d '{
+      "code": "your-device-code",
+      "hdId": "your-device-id"
+    }'
+  ```
+</ParamField>
+
+### 刷新令牌
+
+<ParamField path="/api/auth/refresh" method="POST">
+  使用刷新令牌获取新的访问令牌。
+
+  **请求参数**
+
+  <Param body="refreshToken" type="string" required>
+    刷新令牌
+  </Param>
+
+  **响应格式**
+  ```json
+  {
+    "code": 200,
+    "data": {
+      "accessToken": "string",
+      "expiresIn": 3600,
+      "refreshToken": "string"
+    }
+  }
+  ```
+
+  **响应状态码**
+  - `200`: 成功
+  - `400`: 刷新令牌无效
+
+  **示例请求**
+  ```bash
+  curl -X POST http://your-api-domain/api/auth/refresh \
+    -H "Content-Type: application/json" \
+    -d '{
+      "refreshToken": "your-refresh-token"
+    }'
+  ```
+</ParamField>
+
+### 硬件日志
+
+<ParamField path="/api/hd/logs" method="GET">
+  获取硬件设备日志。
+
+  **请求头**
+  ```json
+  {
+    "Authorization": "Bearer your-access-token"
+  }
+  ```
+
+  **响应格式**
+  ```json
+  {
+    "code": 200,
+    "data": {
+      "logs": [
+        {
+          "timestamp": "string",
+          "level": "string",
+          "message": "string"
+        }
+      ]
+    }
+  }
+  ```
+
+  **响应状态码**
+  - `200`: 成功
+  - `401`: 未授权
+  - `403`: 访问被拒绝
+
+  **示例请求**
+  ```bash
+  curl -X GET http://your-api-domain/api/hd/logs \
+    -H "Authorization: Bearer your-access-token"
+  ```
+</ParamField>

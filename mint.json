@@ -48,7 +48,8 @@
       "group": "WaiNao API",
       "pages": [
         "api-reference/wainao/introduction",
-        "api-reference/wainao/authentication"
+        "api-reference/wainao/authentication",
+        "api-reference/wainao/hardware-backend-api"
       ]
     },
     {
